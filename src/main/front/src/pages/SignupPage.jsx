@@ -1,9 +1,10 @@
-// SignupPage.jsx
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './SignupPage.css';
 
+
 const SignupPage = () => {
+  const navigate = useNavigate();
   const [agreements, setAgreements] = useState({
     terms: false,
     privacy: false
@@ -14,6 +15,12 @@ const SignupPage = () => {
       ...prev,
       [type]: !prev[type]
     }));
+  };
+
+  const handleNext = () => {
+    if (agreements.terms && agreements.privacy) {
+      navigate('/signup/type');
+    }
   };
 
   return (
@@ -31,10 +38,6 @@ const SignupPage = () => {
           </ul>
         </nav>
       </header>
-
-      <div className="breadcrumb">
-        <span>통합회원</span> &gt; <span>회원가입</span>
-      </div>
 
       <div className="signup-steps">
         <div className="step active">
@@ -60,8 +63,7 @@ const SignupPage = () => {
         <p className="notice-text">
           다른 사람의 주민등록번호 또는 아이디/비밀번호를 부정하게 사용한 경우는 
           <span className="highlight">5년 이하의 징역이나 5000만원 이하의 벌금</span>
-          이 부과됩니다. 개인정보 보호법에 따라 회원정보 보유기간은 최종 로그인 날짜로 부터 4년이며, 4년 후 자동 탈퇴처리 됩니다.
-          (아래 개인정보 수집 및 이용약관 참조)
+          이 부과됩니다.
         </p>
       </div>
 
@@ -90,6 +92,7 @@ const SignupPage = () => {
       <button 
         className="next-button"
         disabled={!agreements.terms || !agreements.privacy}
+        onClick={handleNext}
       >
         다음
       </button>
@@ -100,12 +103,8 @@ const SignupPage = () => {
           <p className="phone">051 - 120</p>
           <p className="hours">평일 08:30 ~ 18:30 야간.공휴일 당직실 전환</p>
         </div>
-        <div className="address">
-          (우 559988) 부산광역시 부산구 부산대로 1048(부산동)
-        </div>
       </footer>
     </div>
   );
 };
-
 export default SignupPage;
