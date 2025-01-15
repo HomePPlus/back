@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SafeHouse 회원가입</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input {
+            width: calc(100% - 120px);
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .message {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .verification-section {
+            margin-top: 10px;
+            display: none;
+        }
+        .email-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<h2>SafeHouse 회원가입</h2>
+
+<form id="signupForm" onsubmit="return false;">
+    <div class="form-group">
+        <label>이름</label>
+        <input type="text" name="userName" required>
+    </div>
+
+    <div class="form-group">
+        <label>이메일</label>
+        <div class="email-group">
+            <input type="email" name="email" id="email" required>
+            <button type="button" onclick="checkEmail()">중복확인</button>
+        </div>
+        <div id="emailCheckMessage" class="message"></div>
+        <button type="button" id="sendVerificationBtn" onclick="sendVerificationCode()" disabled>인증코드 받기</button>
+        <div id="verificationSection" class="verification-section">
+            <input type="text" id="verificationCode" placeholder="인증코드 6자리 입력">
+            <button type="button" onclick="verifyCode()">인증확인</button>
+            <div id="verificationMessage" class="message"></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>비밀번호</label>
+        <input type="password" name="password" required>
+    </div>
+
+    <div class="form-group">
+        <label>비밀번호 확인</label>
+        <input type="password" name="confirmPassword" required>
+    </div>
+
+    <div class="form-group">
+        <label>전화번호</label>
+        <input type="tel" name="phone" required>
+    </div>
+
+    <div class="form-group">
+        <label>주소</label>
+        <input type="text" name="detailAddress" required>
+    </div>
+
+    <button type="submit" id="submitBtn" disabled>회원가입</button>
+</form>
+
+<script>
+    let isEmailVerified = false;
+    let isEmailChecked = false;
+
+    // 페이지 로드 시 저장된 상태 확인
+    window.onload = function() {
+        isEmailVerified = localStorage.getItem('isEmailVerified') === 'true';
+        isEmailChecked = localStorage.getItem('isEmailChecked') === 'true';
+        const email = localStorage.getItem('email');
+
+        if (email) {
+            document.getElementById('email').value = email;
+            document.getElementById('verificationSection').style.display = 'block';
+            document.getElementById('sendVerificationBtn').disabled = !isEmailChecked;
+            document.getElementById('submitBtn').disabled = !isEmailVerified;
+        }
+    }
+
+     async function checkEmail() {
+    const email = document.getElementById('email').value;
+    try {
+        const response = await fetch('/api/users/check-email?email=' + email);
+        const messageDiv = document.getElementById('emailCheckMessage');
+
+        if (response.ok) {
+            const result = await response.json();
+            messageDiv.textContent = result.message;
+            messageDiv.className = 'message success';
+            document.getElementById('sendVerificationBtn').disabled = false;
+            document.getElementById('verificationSection').style.display = 'block';
+            isEmailChecked = true;
+            localStorage.setItem('isEmailChecked', 'true');
+            localStorage.setItem('email', email);
+        } else {
+            const errorText = await response.text();
+            messageDiv.textContent = errorText;
+            messageDiv.className = 'message error';
+            document.getElementById('sendVerificationBtn').disabled = true;
+            isEmailChecked = false;
+            localStorage.setItem('isEmailChecked', 'false');
+        }
+    } catch (error) {
+        document.getElementById('emailCheckMessage').textContent = '중복 확인 실패';
+        document.getElementById('emailCheckMessage').className = 'message error';
+    }
+}
+
+
+
+    async function sendVerificationCode() {
+        const email = document.getElementById('email').value;
+        try {
+            const response = await fetch('/api/users/send-verification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+
+            if (response.ok) {
+                document.getElementById('verificationSection').style.display = 'block';
+                document.getElementById('sendVerificationBtn').textContent = '인증코드 재발송';
+            }
+        } catch (error) {
+            document.getElementById('verificationMessage').textContent = '인증코드 발송 실패';
+            document.getElementById('verificationMessage').className = 'message error';
+        }
+    }
+
+    async function verifyCode() {
+        const code = document.getElementById('verificationCode').value;
+        try {
+            const response = await fetch('/api/users/verify?token=' + code);
+            const result = await response.json();
+            const messageDiv = document.getElementById('verificationMessage');
+
+            if (response.ok) {
+                messageDiv.textContent = result.message;
+                messageDiv.className = 'message success';
+                document.getElementById('submitBtn').disabled = false;
+                isEmailVerified = true;
+                localStorage.setItem('isEmailVerified', 'true');
+            } else {
+                messageDiv.textContent = result.message;
+                messageDiv.className = 'message error';
+                isEmailVerified = false;
+                localStorage.setItem('isEmailVerified', 'false');
+            }
+        } catch (error) {
+            document.getElementById('verificationMessage').textContent = '인증 실패';
+            document.getElementById('verificationMessage').className = 'message error';
+        }
+    }
+
+
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!isEmailVerified || !isEmailChecked) {
+            alert('이메일 인증을 완료해주세요.');
+            return;
+        }
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/api/users/resident/join', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert('회원가입이 완료되었습니다.');
+                window.location.href = '/login';
+            } else {
+                alert(JSON.stringify(result));
+            }
+        } catch (error) {
+            alert('회원가입 실패: ' + error.message);
+        }
+    });
+</script>
+</body>
+</html>
