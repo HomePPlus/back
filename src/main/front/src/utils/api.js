@@ -1,12 +1,32 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api/users';
+const api = {
+  // 회원가입 관련 API
+  registerResident: (data) => {
+    return axios.post('/api/users/resident/join', data);
+  },
+  
+  registerInspector: (data) => {
+    return axios.post('/api/users/inspector/join', data);
+  },
 
-export const api = {
-  registerResident: (data) => axios.post(`${API_BASE_URL}/resident/join`, data),
-  registerInspector: (data) => axios.post(`${API_BASE_URL}/inspector/join`, data),
-  getProfile: () => axios.get(`${API_BASE_URL}/profile`),
-  verifyEmail: (token) => axios.get(`${API_BASE_URL}/verify?token=${token}`),
-  checkEmail: (email) => axios.get(`${API_BASE_URL}/check-email?email=${email}`),
-  sendVerificationCode: (email) => axios.post(`${API_BASE_URL}/send-verification`, { email }),
+  // 이메일 관련 API
+  checkEmail: (email) => {
+    return axios.get(`/api/users/check-email?email=${email}`);
+  },
+
+  sendVerificationCode: (email) => {
+    return axios.post('/api/users/send-verification', { email: email });
+  },
+  
+
+  verifyEmail: (token) => {
+    return axios.get(`/api/users/verify?token=${token}`);
+  },
+
+  // 프로필 조회
+  getProfile: () => {
+    return axios.get('/api/users/profile');
+  }
 };
+export default api;

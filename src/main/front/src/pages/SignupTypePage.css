@@ -1,0 +1,72 @@
+/* SignupTypePage.css */
+.signup-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .main-nav ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+  }
+  
+  .main-nav a {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .signup-steps {
+    display: flex;
+    justify-content: space-between;
+    margin: 40px 0;
+  }
+  
+  .step {
+    text-align: center;
+    position: relative;
+  }
+  
+  .step.active {
+    color: #00a651;
+  }
+  
+  .type-selection {
+    max-width: 800px;
+    margin: 40px auto;
+    text-align: center;
+  }
+  
+  .type-options {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+  }
+  
+  .type-option {
+    width: 300px;
+    padding: 30px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .type-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .footer {
+    margin-top: 50px;
+    text-align: center;
+  }
+  
