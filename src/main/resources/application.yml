@@ -70,3 +70,7 @@ spring.security:
 jwt:
   secret: yourSecretKeyHereMustBeLongEnoughForSecurity  # JWT 토큰 암호화 키
 
+# 파일 업로드 경로
+file:
+  upload:
+    path: 'C:/Users/User/safehouse_upload_images/'
