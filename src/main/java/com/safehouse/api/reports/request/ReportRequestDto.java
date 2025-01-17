@@ -1,4 +1,4 @@
-package com.safehouse.api.report.request;
+package com.safehouse.api.reports.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

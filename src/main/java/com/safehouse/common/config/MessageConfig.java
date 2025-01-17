@@ -14,7 +14,7 @@ public class MessageConfig {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:messages");
         messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setAlwaysUseMessageFormat(true);  // 이 설정 추가
+        messageSource.setAlwaysUseMessageFormat(true);
         return messageSource;
     }
 

@@ -36,4 +36,24 @@ public class CustomException {
             super(message);
         }
     }
+    // 신고 내용이 비어있을 때 발생하는 예외처리
+    public static class InvalidRequestException extends RuntimeException {
+        public InvalidRequestException(String message) {
+            super(message);
+        }
+    }
+    // JSON 형식이 잘못되었을 때 발생하는 예외처리
+    public static class InvalidJsonFormatException extends RuntimeException {
+        public InvalidJsonFormatException(String message) {
+            super(message);
+        }
+    }
+    // 파일 업로드 실패 시 발생하는 예외처리
+    public static class FileUploadException extends RuntimeException {
+        public FileUploadException(String message) {
+            super(message);
+        }
+    }
+
+
 }
