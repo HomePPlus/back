@@ -3,11 +3,14 @@ spring:
   application:
     name: safehouse # 애플리케이션 이름 설정
 
+  config:
+    import: optional:file:.env[.properties]
+
   # 데이터베이스 연결 설정
   datasource:
-    url: jdbc:mysql://localhost:3306/safehouse?serverTimezone=Asia/Seoul&characterEncoding=utf8&useUnicode=true
-    username: root
-    password: aivle
+    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB}?serverTimezone=Asia/Seoul&characterEncoding=utf8&useUnicode=true
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 
   # JPA 설정
   jpa:
