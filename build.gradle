@@ -46,6 +46,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	// Azure DB
+	// Spring Cloud Azure BOM
+    implementation platform('com.azure.spring:spring-cloud-azure-dependencies:5.19.0')
+    // Azure MySQL JDBC Starter
+    implementation 'com.azure.spring:spring-cloud-azure-starter-jdbc-mysql'
+
 }
 
 tasks.named('test') {
