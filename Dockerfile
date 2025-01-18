@@ -1,5 +1,22 @@
-FROM openjdk:17
+# Build stage
+
+FROM bellsoft/liberica-openjdk-alpine:17 AS builder
+
 WORKDIR /app
-COPY ./target/spring-0.0.1-SNAPSHOT.jar /app
+
+COPY . .
+
+RUN ./gradlew clean build -x test
+
+
+# Run stage
+
+FROM bellsoft/liberica-openjdk-alpine:17
+
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/*.jar app.jar
+
 EXPOSE 8080
-CMD ["java", "-jar", "spring-0.0.1-SNAPSHOT.jar"]
+
+ENTRYPOINT ["java","-jar","app.jar"]
