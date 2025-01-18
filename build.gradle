@@ -52,6 +52,10 @@ dependencies {
     // Azure MySQL JDBC Starter
     implementation 'com.azure.spring:spring-cloud-azure-starter-jdbc-mysql'
 
+	// dotenv
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+
 }
 
 tasks.named('test') {
