@@ -39,7 +39,8 @@ public class SecurityConfig {
                                 "/api/users/**",     // 회원가입, 이메일 인증 등 모든 사용자 관련 API
                                 "/api/auth/**",      // 로그인 등 인증 관련 API
                                 "/login",             // 로그인 페이지
-                                "/api/reports"
+                                "/api/reports",     // 신고 관련 API
+                                "/api/health"       // 서버 상태 확인 API
                         ).permitAll()
                         // 정적 리소스
                         .requestMatchers(
