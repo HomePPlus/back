@@ -4,7 +4,7 @@ import com.safehouse.api.users.dto.response.EmailVerificationResponseDto;
 import com.safehouse.common.exception.CustomException;
 import com.safehouse.common.response.ApiResponse;
 import com.safehouse.domain.user.entity.VerificationToken;
-import com.safehouse.domain.user.repository.UserRepository;
+// import com.safehouse.domain.user.repository.UserRepository;
 import com.safehouse.domain.user.repository.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -16,7 +16,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class EmailVerificationService {
-    private final UserRepository userRepository;
+    // private final UserRepository userRepository;
     private final MessageSource messageSource;
     private final EmailService emailService;
     private final VerificationTokenRepository verificationTokenRepository;

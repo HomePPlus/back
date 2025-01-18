@@ -39,6 +39,7 @@ public class Report {
     private String defectType; //여기도 원래 건물결함id 써야함
 
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ReportImage> images = new ArrayList<>();  // 초기화 추가
 }
 

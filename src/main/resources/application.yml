@@ -1,7 +1,7 @@
 # 애플리케이션 기본 설정
 spring:
   application:
-    name: safehouse  # 애플리케이션 이름 설정
+    name: safehouse # 애플리케이션 이름 설정
 
   # 데이터베이스 연결 설정
   datasource:
@@ -12,23 +12,19 @@ spring:
   # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: update  # 데이터베이스 스키마 자동 업데이트
-    show-sql: true      # SQL 쿼리 로그 출력
+      ddl-auto: update # 데이터베이스 스키마 자동 업데이트
+    show-sql: true # SQL 쿼리 로그 출력
     properties:
       hibernate:
-        format_sql: true  # SQL 쿼리 포맷팅
+        format_sql: true # SQL 쿼리 포맷팅
+        dialect: org.hibernate.dialect.MySQLDialect # 데이터베이스 방언 설정
 
   # SQL 초기화 설정
   sql:
     init:
-      mode: always      # SQL 스크립트 항상 실행
-      encoding: UTF-8   # SQL 스크립트 인코딩
+      mode: always # SQL 스크립트 항상 실행
+      encoding: UTF-8 # SQL 스크립트 인코딩
 
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
   mvc:
     charset: UTF-8
 
@@ -45,32 +41,31 @@ spring:
           starttls:
             enable: true
 
-
 # 서버 인코딩 설정
 server:
   servlet:
     encoding:
-      charset: UTF-8    # 문자 인코딩 설정
-      force: true       # 인코딩 강제 적용
+      charset: UTF-8 # 문자 인코딩 설정
+      force: true # 인코딩 강제 적용
       force-response: true
-      enabled: true     # 인코딩 설정 활성화
+      enabled: true # 인코딩 설정 활성화
 
 # 로깅 설정
 logging:
   level:
-    org.springframework.security: DEBUG  # 스프링 시큐리티 로그 레벨 설정
+    org.springframework.security: DEBUG # 스프링 시큐리티 로그 레벨 설정
 
 # 스프링 시큐리티 설정
 spring.security:
   user:
-    name: root         # 기본 사용자 이름
-    password: aivle    # 기본 사용자 비밀번호
+    name: root # 기본 사용자 이름
+    password: aivle # 기본 사용자 비밀번호
 
 # JWT 설정
 jwt:
-  secret: yourSecretKeyHereMustBeLongEnoughForSecurity  # JWT 토큰 암호화 키
+  secret: yourSecretKeyHereMustBeLongEnoughForSecurity # JWT 토큰 암호화 키
 
 # 파일 업로드 경로
 file:
   upload:
-    path: 'C:/Users/User/safehouse_upload_images/'
+    path: "C:/Users/User/safehouse_upload_images/"
