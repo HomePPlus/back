@@ -14,6 +14,6 @@ public class JwtConfig {
 
     @Bean
     public JwtTokenProvider jwtTokenProvider() {
-        return new JwtTokenProvider(secretKey, tokenValidityInMilliseconds);
+        return new JwtTokenProvider(secretKey, tokenValidityInMilliseconds, null);
     }
 }

@@ -1,4 +1,4 @@
-package com.safehouse.api.login.dto.response;
+package com.safehouse.api.auth.login.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

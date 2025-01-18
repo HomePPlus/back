@@ -1,4 +1,4 @@
-package com.safehouse.api.login.dto.request;
+package com.safehouse.api.auth.login.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

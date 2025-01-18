@@ -1,19 +1,19 @@
-package com.safehouse.api.login;
+package com.safehouse.api.auth.login;
 
-import com.safehouse.api.login.dto.request.LoginDto;
-import com.safehouse.api.login.dto.response.LoginResponseDto;
+import com.safehouse.api.auth.login.dto.request.LoginDto;
+import com.safehouse.api.auth.login.dto.response.LoginResponseDto;
 import com.safehouse.common.response.ApiResponse;
-import com.safehouse.domain.auth.service.AuthenticationService;
+import com.safehouse.domain.auth.service.LoginService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class LoginController {
 
-    private final AuthenticationService userService;
+    private final LoginService userService;
 
-    public LoginController(AuthenticationService userService) {
+    public LoginController(LoginService userService) {
         this.userService = userService;
     }
 

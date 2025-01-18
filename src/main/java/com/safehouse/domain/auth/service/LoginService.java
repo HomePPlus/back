@@ -1,10 +1,10 @@
 package com.safehouse.domain.auth.service;
-import com.safehouse.api.login.dto.response.LoginResponseDto;
+import com.safehouse.api.auth.login.dto.response.LoginResponseDto;
 import com.safehouse.common.response.ApiResponse;
 import com.safehouse.common.exception.CustomException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import com.safehouse.domain.user.entity.User;
-import com.safehouse.api.login.dto.request.LoginDto;
+import com.safehouse.api.auth.login.dto.request.LoginDto;
 import com.safehouse.domain.user.repository.UserRepository;
 import com.safehouse.common.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 // 로그인 처리, JWT 토큰 생성 및 검증
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class LoginService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;

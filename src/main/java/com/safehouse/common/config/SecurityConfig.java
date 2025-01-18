@@ -1,5 +1,6 @@
 package com.safehouse.common.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,9 +24,12 @@ import java.util.Arrays;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private JwtTokenProvider jwtTokenProvider;
 
-    private final JwtTokenProvider jwtTokenProvider;
-
+    @Autowired
+    public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -38,7 +42,6 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/users/**",     // 회원가입, 이메일 인증 등 모든 사용자 관련 API
                                 "/api/auth/**",      // 로그인 등 인증 관련 API
-                                "/login",             // 로그인 페이지
                                 "/api/reports",     // 신고 관련 API
                                 "/api/health"       // 서버 상태 확인 API
                         ).permitAll()
@@ -55,6 +58,8 @@ public class SecurityConfig {
                                 "/**/*.css",
                                 "/**/*.js"
                         ).permitAll()
+                        // 로그아웃은 인증된 사용자만
+                        .requestMatchers("/api/auth/logout").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
@@ -62,6 +67,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
