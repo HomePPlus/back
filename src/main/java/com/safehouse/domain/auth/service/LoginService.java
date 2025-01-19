@@ -12,7 +12,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-// 로그인 처리, JWT 토큰 생성 및 검증
+// 로그인 처리, JWT 토큰 생성 및 검증, 아이디 비번 찾기
 @Service
 @RequiredArgsConstructor
 public class LoginService {
@@ -41,8 +41,8 @@ public class LoginService {
                 getMessage("login.success"),
                 responseDto
         );
-
     }
+
 
     private String getMessage(String code) {
         return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());

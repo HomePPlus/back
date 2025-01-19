@@ -37,4 +37,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Report> reports = new ArrayList<>();
+
+    // 비밀번호 변경하면 updateAt 갱신
+    public void setPassword(String password) {
+        this.password = password;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

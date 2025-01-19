@@ -55,4 +55,34 @@ public class EmailService {
             throw new RuntimeException("email.delivery.failed", e);
         }
     }
+    public void sendPasswordResetCode(String to, String code) {
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom(new InternetAddress("SafeHouse@gmail.com", "홈쁘라스"));
+            helper.setTo(to);
+            helper.setSubject("안주 : 비밀번호 재설정 코드");
+
+            String htmlContent =
+                    "<div style='background-color: #ffffff; padding: 20px; font-family: Arial, sans-serif;'>" +
+                            "<div style='max-width: 600px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>" +
+                            "<h1 style='color: #333333; text-align: center; font-size: 24px; margin: 20px 0;'>비밀번호 재설정 코드</h1>" +
+                            "<p style='color: #666666; text-align: center; font-size: 16px; margin: 10px 0;'>아래의 코드를 입력하여 비밀번호를 재설정해주세요.</p>" +
+                            "<div style='text-align: center; margin: 30px 0;'>" +
+                            "<div style='font-size: 32px; font-weight: bold; color: #4a90e2; letter-spacing: 8px; background-color: #f8f9fa; padding: 20px; display: inline-block; border-radius: 5px;'>" +
+                            code +
+                            "</div>" +
+                            "</div>" +
+                            "<p style='color: #999999; text-align: center; font-size: 14px; margin-top: 30px;'>본 코드는 15분간 유효합니다.</p>" +
+                            "</div>" +
+                            "</div>";
+
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException("email.delivery.failed", e);
+        }
+    }
+
+
 }
