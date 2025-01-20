@@ -44,19 +44,19 @@ public class JoinController {
     }
 
     @GetMapping("/check-email")
-    public ApiResponse<EmailValidationResponseDto> checkEmail(@RequestParam String email) {
+    public ApiResponse<EmailValidationResponseDto> checkEmail(@RequestParam(name = "email") String email) {
         return emailValidationService.checkEmail(email);
     }
 
     @PostMapping("/send-verification")
-    public ApiResponse<EmailVerificationResponseDto> sendVerificationCode(@RequestParam String email) {
+    public ApiResponse<EmailVerificationResponseDto> sendVerificationCode(@RequestParam(name = "email") String email) {
         return emailVerificationService.sendVerificationCode(email);
     }
 
     @PostMapping("/verify-code")
     public ApiResponse<EmailVerificationResponseDto> verifyCode(
-            @RequestParam String email,
-            @RequestParam String code) {
+            @RequestParam(name = "email") String email,
+            @RequestParam(name = "code") String code) {
         return emailVerificationService.verifyEmail(email, code);
     }
 }

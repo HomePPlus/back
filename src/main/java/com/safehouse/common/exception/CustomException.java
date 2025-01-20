@@ -78,4 +78,13 @@ public class CustomException {
         }
     }
 
+    //게시글이 없을때 발생하는 예외
+    public static class PostNotExist extends RuntimeException{
+        public PostNotExist(String message){super(message); }
+    }
+
+    //게시글이 본인것이 아닐때
+    public static class PostNotOwner extends RuntimeException{
+        public PostNotOwner(String message){super(message); }
+    }
 }

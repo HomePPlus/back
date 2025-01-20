@@ -15,7 +15,7 @@ public class UserProfileResponseDto {
     private String role;
 
     public UserProfileResponseDto(User user) {
-        this.userName = user.getUserName();
+        this.userName = user.getUserRealName();
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.address = user.getDetailAddress();
