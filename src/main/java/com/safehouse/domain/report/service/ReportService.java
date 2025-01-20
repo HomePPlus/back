@@ -18,7 +18,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.safehouse.common.service.AddressUtil;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -53,6 +53,7 @@ public class ReportService {
         );
     }
 
+
     private ReportResponseDto convertToResponse(Report report) {
         List<ImageResponseDto> imageResponses = report.getImages().stream()
                 .map(image -> ImageResponseDto.builder()
@@ -73,6 +74,7 @@ public class ReportService {
     }
 
     private Report createReportEntity(ReportRequestDto request, User user) {
+        String area = AddressUtil.extractDistrict(request.getReportDetailAddress());
         return Report.builder()
                 .user(user)
                 .reportDetailAddress(request.getReportDetailAddress())
@@ -80,6 +82,7 @@ public class ReportService {
                 .reportDescription(request.getReportDescription())
                 .reportDate(LocalDateTime.now())
                 .images(new ArrayList<>())
+                .area(area)
                 .build();
     }
 

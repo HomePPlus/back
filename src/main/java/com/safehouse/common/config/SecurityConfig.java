@@ -1,5 +1,6 @@
 package com.safehouse.common.config;
 
+import com.safehouse.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,14 +23,13 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -38,11 +38,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 회원가입 및 인증 관련 API
+                        // 기능 API
                         .requestMatchers(
                                 "/api/users/**",     // 회원가입, 이메일 인증 등 모든 사용자 관련 API
                                 "/api/auth/**",      // 로그인 등 인증 관련 API
                                 "/api/reports",     // 신고 관련 API
+                                "/api/schedules/**",  // 일정관리 API
                                 "/api/health"       // 서버 상태 확인 API
                         ).permitAll()
                         // 정적 리소스

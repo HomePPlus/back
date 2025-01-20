@@ -78,4 +78,23 @@ public class CustomException {
         }
     }
 
+    // 일정 관리 예외
+    public static class NotFoundException extends RuntimeException {
+        public NotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    public static class UnauthorizedException extends RuntimeException {
+        public UnauthorizedException(String message) {
+            super(message);
+        }
+    }
+    // 중복 예약 예외 처리
+    public static class DuplicateScheduleException extends RuntimeException {
+        public DuplicateScheduleException(String message) {
+            super(message);
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.safehouse.domain.user.service;
 
 import com.safehouse.common.response.ApiResponse;
+import com.safehouse.common.service.AddressUtil;
 import com.safehouse.domain.user.entity.Inspector;
 import com.safehouse.domain.user.entity.User;
 import com.safehouse.api.users.dto.request.InspectorSignUpDto;
@@ -51,10 +52,16 @@ public class RegistrationService {
         validateRegistration(dto.getEmail(), dto.getPassword(), dto.getConfirmPassword());
 
         User user = createUser(dto, "INSPECTOR");
+
+        // 주소에서 구 정보 추출
+        String district = AddressUtil.extractDistrict(dto.getDetailAddress());
+
         Inspector inspector = new Inspector();
         inspector.setUser(user);
         inspector.setInspector_company(dto.getInspector_company());
         inspector.setInspector_number(dto.getInspector_number());
+        inspector.setArea(district); // 추출한 구 정보 설정
+
         inspectorRepository.save(inspector);
 
         RegistrationResponseDto responseDto = new RegistrationResponseDto(
