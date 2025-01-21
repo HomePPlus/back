@@ -8,17 +8,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 public class JwtConfig {
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret}") // application.properties에 설정할 시크릿 키
     private String secretKey;
 
-    // 기본값 설정 추가
     @Value("${jwt.token-validity-in-seconds:86400}")
     private long validityInSeconds;
 
+//    private final UserDetailsService userDetailsService;
+//
+//    public JwtConfig(UserDetailsService userDetailsService) {
+//        this.userDetailsService = userDetailsService;
+//    }
 
     @Bean
     public JwtTokenProvider jwtTokenProvider(UserDetailsService userDetailsService) {
         return new JwtTokenProvider(secretKey, validityInSeconds * 1000, userDetailsService);
     }
 }
-

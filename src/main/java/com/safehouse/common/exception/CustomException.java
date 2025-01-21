@@ -77,7 +77,6 @@ public class CustomException {
             super(message);
         }
     }
-
     // 일정 관리 예외
     public static class NotFoundException extends RuntimeException {
         public NotFoundException(String message) {
@@ -96,5 +95,19 @@ public class CustomException {
             super(message);
         }
     }
+    //게시글이 없을때 발생하는 예외
+    public static class PostNotExist extends RuntimeException{
+        public PostNotExist(String message){
+            super(message);
+        }
+    }
+
+    //게시글이 본인것이 아닐때
+    public static class PostNotOwner extends RuntimeException{
+        public PostNotOwner(String message){
+            super(message);
+        }
+    }
+
 
 }

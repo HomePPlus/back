@@ -33,7 +33,7 @@ public class RegistrationService {
     public ApiResponse<RegistrationResponseDto> registerResident(ResidentSignUpDto dto) {
         validateRegistration(dto.getEmail(), dto.getPassword(), dto.getConfirmPassword());
 
-        // User user = createUser(dto, "RESIDENT");
+         User user = createUser(dto, "RESIDENT");
         RegistrationResponseDto responseDto = new RegistrationResponseDto(
                 true,
                 getMessage("registration.success"),

@@ -25,7 +25,7 @@ public class JwtTokenProvider {
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
                             @Value("${jwt.token-validity-in-seconds}") long validityInSeconds,
-                            @Autowired(required = false) UserDetailsService userDetailsService) {
+                            UserDetailsService userDetailsService) {
         this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         this.validityInMilliseconds = validityInSeconds * 1000;
         this.userDetailsService = userDetailsService;

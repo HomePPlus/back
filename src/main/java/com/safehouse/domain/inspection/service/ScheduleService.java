@@ -174,8 +174,6 @@ public class ScheduleService {
         }
     }
 
-
-
     // DTO 변환 메서드들
     private ScheduleResponseDto convertToDto(ReportSchedule schedule) {
         ScheduleResponseDto dto = new ScheduleResponseDto();
@@ -183,7 +181,7 @@ public class ScheduleService {
         dto.setScheduleDate(schedule.getScheduleDate());
         dto.setNextDate(schedule.getNextDate());
         dto.setStatus(schedule.getStatus());
-        dto.setInspectorName(schedule.getInspector().getUser().getUserName());
+        dto.setInspectorName(schedule.getInspector().getUser().getUserRealName());
 
         // Report 정보 설정
         Report report = reportRepository.findById(schedule.getReport().getReportId()).orElse(null);
@@ -205,7 +203,7 @@ public class ScheduleService {
         dto.setScheduleDate(schedule.getScheduleDate());
         dto.setNextDate(schedule.getNextDate());
         dto.setStatus(schedule.getStatus());
-        dto.setInspectorName(schedule.getInspector().getUser().getUserName());
+        dto.setInspectorName(schedule.getInspector().getUser().getUserRealName());
         return dto;
     }
 
