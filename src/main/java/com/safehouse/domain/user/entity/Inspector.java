@@ -32,5 +32,12 @@ public class Inspector {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // 점검자 이름을 User 엔티티에서 가져오는 메소드 추가
+    public String getInspectorName() {
+        return user.getUserRealName();  // User 엔티티의 실제 이름을 반환
+    }
 
+    public String getEmail() {
+        return user.getEmail();
+    }
 }

@@ -45,7 +45,9 @@ public class SecurityConfig {
                                 "/api/health",       // 서버 상태 확인 API
                                 "api/resident_communities/**", //커뮤니티 관련 API
                                 "/api/schedules/**",  // 일정관리 API
-                                "/api/health"       // 서버 상태 확인 API
+                                "/api/health",      // 서버 상태 확인 API
+                                "/api/inspector_communities/**"
+
                         ).permitAll()
                         // 정적 리소스
                         .requestMatchers(
