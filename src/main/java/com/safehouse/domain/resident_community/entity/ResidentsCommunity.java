@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 // ResidentsCommunity.java
 @Entity
@@ -46,6 +48,17 @@ public class ResidentsCommunity {
     public void update(String communityTitle, String communityContent) {
         this.communityTitle = communityTitle;
         this.communityContent = communityContent;
+    }
+
+    @OneToMany(mappedBy = "residentCommunity", cascade = CascadeType.ALL)
+    private List<ResidentsComment> comments = new ArrayList<>();
+
+    public void addComment(ResidentsComment comment) {
+        this.comments.add(comment);
+    }
+
+    public void removeComment(ResidentsComment comment) {
+        this.comments.remove(comment);
     }
 }
 

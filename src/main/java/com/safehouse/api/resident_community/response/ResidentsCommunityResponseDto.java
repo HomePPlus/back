@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -21,6 +22,7 @@ public class ResidentsCommunityResponseDto {
     private LocalDateTime communityCreatedAt;
     private LocalDateTime communityUpdatedAt;
     private Long communityViews;
+    private List<ResidentsCommentResponseDto> comments;
 
     public static ResidentsCommunityResponseDto from(ResidentsCommunity community) {
         ResidentsCommunityResponseDto dto = new ResidentsCommunityResponseDto();
@@ -34,4 +36,9 @@ public class ResidentsCommunityResponseDto {
         dto.communityViews = community.getCommunityViews();
         return dto;
     }
+
+    public void setComments(List<ResidentsCommentResponseDto> comments) {
+        this.comments = comments;
+    }
 }
+
