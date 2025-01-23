@@ -10,6 +10,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "inspectors_communities")
@@ -54,5 +56,17 @@ public class InspectorsCommunity {
 
     public void increaseViews() {
         this.inspectorViews++;
+    }
+
+    //댓글
+    @OneToMany(mappedBy = "inspectorsCommunity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InspectorsComment> comments = new ArrayList<>();
+
+    public void addComment(InspectorsComment comment) {
+        this.comments.add(comment);
+    }
+
+    public void removeComment(InspectorsComment comment) {
+        this.comments.remove(comment);
     }
 }

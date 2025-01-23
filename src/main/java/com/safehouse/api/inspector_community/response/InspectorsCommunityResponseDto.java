@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -16,4 +17,5 @@ public class InspectorsCommunityResponseDto {
     private LocalDateTime inspectorCommunityCreatedAt;
     private LocalDateTime inspectorCommunityUpdatedAt;
     private Long inspectorViews;
+    private List<InspectorsCommentResponseDto> comments;
 }
