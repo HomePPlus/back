@@ -44,6 +44,16 @@ spring:
           starttls:
             enable: true
 
+# 멀티 파트 요청(모델)
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500MB
+      max-request-size: 500MB
+      resolve-lazily: true    # 멀티파트 요청을 필요할 때만 파싱
+      location: ${java.io.tmpdir} # 임시 파일 저장 위치
+
+
 # 서버 인코딩 설정
 server:
   servlet:
@@ -73,3 +83,8 @@ jwt:
 file:
   upload:
     path: "C:/Users/User/safehouse_upload_images/"
+
+# FastAPI 서버 URL
+fastapi:
+  server:
+    url: http://localhost:8000

@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -45,6 +46,7 @@ public class SecurityConfig {
                                 "/api/health",       // 서버 상태 확인 API
                                 "api/resident_communities/**", //커뮤니티 관련 API
                                 "/api/schedules/**",  // 일정관리 API
+                                "/api/model/**",      // model
                                 "/api/health"       // 서버 상태 확인 API
                         ).permitAll()
                         // 정적 리소스
@@ -76,7 +78,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://safehouse-react-a5eyc2a9a0byd5hq.koreacentral-01.azurewebsites.net")); // React 서버
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
