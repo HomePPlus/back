@@ -2,6 +2,7 @@ package com.safehouse.domain.auth.service;
 import com.safehouse.api.auth.login.dto.response.LoginResponseDto;
 import com.safehouse.common.response.ApiResponse;
 import com.safehouse.common.exception.CustomException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.i18n.LocaleContextHolder;
 import com.safehouse.domain.user.entity.User;
 import com.safehouse.api.auth.login.dto.request.LoginDto;
@@ -21,7 +22,7 @@ public class LoginService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MessageSource messageSource;
 
-    public ApiResponse<LoginResponseDto> login(LoginDto loginDto) {
+    public ApiResponse<LoginResponseDto> login(LoginDto loginDto, HttpServletResponse response) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
 
@@ -34,7 +35,11 @@ public class LoginService {
         }
 
         String token = jwtTokenProvider.createToken(user.getEmail());
-        LoginResponseDto responseDto = new LoginResponseDto(token, getMessage("login.success"));
+
+        // 토큰을 쿠키에 저장
+        jwtTokenProvider.addTokenToCookie(token, response);
+
+        LoginResponseDto responseDto = new LoginResponseDto(getMessage("login.success"));
 
         return new ApiResponse<>(
                 200,
@@ -42,7 +47,6 @@ public class LoginService {
                 responseDto
         );
     }
-
 
     private String getMessage(String code) {
         return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());

@@ -8,11 +8,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class LoginResponseDto {
-    private String token;
     private String message;
 
-    public LoginResponseDto(String token, String message) {
-        this.token = token;
+    public LoginResponseDto(String message) {
         this.message = message;
     }
 }

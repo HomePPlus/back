@@ -2,10 +2,11 @@ package com.safehouse.common.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Set;
@@ -30,8 +31,6 @@ public class JwtTokenProvider {
         this.validityInMilliseconds = validityInSeconds * 1000;
         this.userDetailsService = userDetailsService;
     }
-
-
 
     // 토큰 생성
     public String createToken(String email) {
@@ -96,4 +95,39 @@ public class JwtTokenProvider {
         UserDetails userDetails = userDetailsService.loadUserByUsername(getEmailFromToken(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
+    /*
+     * JWT 토큰을 HTTP-Only 쿠키에 추가하는 메서드
+     * @param token JWT 토큰
+     * @param response HTTP 응답 객체
+     */
+    public void addTokenToCookie(String token, HttpServletResponse response) {
+        // HTTP-Only 쿠키 생성
+        Cookie cookie = new Cookie("JWT_TOKEN", token);
+
+        // 쿠키 보안 설정
+        cookie.setHttpOnly(true);  // JavaScript로 쿠키 접근 방지
+        cookie.setSecure(true);    // HTTPS에서만 쿠키 전송
+        cookie.setPath("/");       // 전체 애플리케이션에서 쿠키 사용
+
+        // 쿠키 만료 시간을 토큰 만료 시간과 동일하게 설정
+        cookie.setMaxAge((int) (validityInMilliseconds / 1000));
+
+        // 응답에 쿠키 추가
+        response.addCookie(cookie);
+    }
+
+    /*
+     * 로그아웃 시 쿠키를 만료시키는 메서드
+     * @param response HTTP 응답 객체
+     */
+    public void invalidateCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("JWT_TOKEN", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);  // 쿠키 즉시 만료
+        response.addCookie(cookie);
+    }
+
+
 }

@@ -20,7 +20,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +46,7 @@ public class SecurityConfig {
                                 "api/resident_communities/**", //커뮤니티 관련 API
                                 "/api/schedules/**",  // 일정관리 API
                                 "/api/health",      // 서버 상태 확인 API
-                                "/api/inspector_communities/**"
+                                "/api/inspector_communities/**",
                                 "/api/model/**"       // model
                         ).permitAll()
                         // 정적 리소스

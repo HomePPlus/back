@@ -4,6 +4,7 @@ import com.safehouse.api.auth.login.dto.request.LoginDto;
 import com.safehouse.api.auth.login.dto.response.LoginResponseDto;
 import com.safehouse.common.response.ApiResponse;
 import com.safehouse.domain.auth.service.LoginService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,10 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<LoginResponseDto> login(@RequestBody @Valid LoginDto loginDto) {
-        return userService.login(loginDto);
+    public ApiResponse<LoginResponseDto> login(
+            @RequestBody @Valid LoginDto loginDto,
+            HttpServletResponse response // 여기도 확인
+    ) {
+        return userService.login(loginDto, response);
     }
 }
-
-
