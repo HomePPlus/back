@@ -44,7 +44,8 @@ public class JoinController {
     }
 
     @GetMapping("/check-email")
-    public ApiResponse<EmailValidationResponseDto> checkEmail(@RequestParam(name = "email") String email) {
+    public ApiResponse<EmailValidationResponseDto> checkEmail(
+            @RequestParam(name = "email", required = false) String email) {
         return emailValidationService.checkEmail(email);
     }
 

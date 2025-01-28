@@ -16,6 +16,11 @@ public class EmailValidationService {
     private final MessageSource messageSource;
 
     public ApiResponse<EmailValidationResponseDto> checkEmail(String email) {
+        // 이메일 null 또는 빈 문자열 체크
+        if (email == null || email.trim().isEmpty()) {
+            throw new CustomException.InvalidInputException(getMessage("email.required"));
+        }
+
         if (userRepository.existsByEmail(email)) {
             throw new CustomException.EmailAlreadyExistsException(getMessage("email.duplicate"));
         }
