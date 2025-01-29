@@ -22,10 +22,6 @@ public class UserSignUpDto {
             message = "{password.format}")
     private String password;
 
-
-    @NotBlank(message = "{confirmPassword.notblank}")
-    private String confirmPassword;
-
     @NotBlank(message = "{detailAddress.notblank}")
     private String detailAddress;   //주소
 

@@ -31,7 +31,7 @@ public class RegistrationService {
 
     @Transactional
     public ApiResponse<RegistrationResponseDto> registerResident(ResidentSignUpDto dto) {
-        validateRegistration(dto.getEmail(), dto.getPassword(), dto.getConfirmPassword());
+        validateRegistration(dto.getEmail(), dto.getPassword());
 
          User user = createUser(dto, "RESIDENT");
         RegistrationResponseDto responseDto = new RegistrationResponseDto(
@@ -49,7 +49,7 @@ public class RegistrationService {
 
     @Transactional
     public ApiResponse<RegistrationResponseDto> registerInspector(InspectorSignUpDto dto) {
-        validateRegistration(dto.getEmail(), dto.getPassword(), dto.getConfirmPassword());
+        validateRegistration(dto.getEmail(), dto.getPassword());
 
         User user = createUser(dto, "INSPECTOR");
 
@@ -77,15 +77,12 @@ public class RegistrationService {
         );
     }
 
-    private void validateRegistration(String email, String password, String confirmPassword) {
+    private void validateRegistration(String email, String password) {
         if (!tokenRepository.existsByEmailAndVerified(email, true)) {
             throw new CustomException.EmailNotVerifiedException(getMessage("email.not.verified"));
         }
         if (userRepository.existsByEmail(email)) {
             throw new CustomException.EmailAlreadyExistsException(getMessage("email.duplicate"));
-        }
-        if (!password.equals(confirmPassword)) {
-            throw new CustomException.PasswordMismatchException(getMessage("password.mismatch"));
         }
     }
 
