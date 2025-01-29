@@ -9,9 +9,11 @@ import com.safehouse.domain.user.repository.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 @Service
 @RequiredArgsConstructor
@@ -93,8 +95,17 @@ public class EmailVerificationService {
         verificationTokenRepository.save(verificationToken);
     }
 
+
     private boolean isCodeExpired(LocalDateTime expiryDate) {
         return LocalDateTime.now().isAfter(expiryDate);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
+    public void cleanupExpiredTokens() {
+        LocalDateTime now = LocalDateTime.now();
+        List<VerificationToken> expiredTokens = verificationTokenRepository
+                .findByExpiryDateBeforeAndVerifiedFalse(now);
+        verificationTokenRepository.deleteAll(expiredTokens);
     }
 
     private String getMessage(String code) {
