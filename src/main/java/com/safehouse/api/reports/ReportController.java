@@ -30,7 +30,7 @@ public class ReportController {
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
         if (reportJson == null || reportJson.trim().isEmpty()) {
-            throw new CustomException.InvalidRequestException(getMessage("report.content.empty"));
+            throw new CustomException.BadRequestException(getMessage("report.content.empty"));
         }
 
         try {
@@ -38,7 +38,7 @@ public class ReportController {
             ReportRequestDto request = mapper.readValue(reportJson, ReportRequestDto.class);
             return reportService.createReport(request, images);
         } catch (JsonProcessingException e) {
-            throw new CustomException.InvalidJsonFormatException(getMessage("json.format.invalid"));
+            throw new CustomException.BadRequestException(getMessage("json.format.invalid"));
         }
     }
 

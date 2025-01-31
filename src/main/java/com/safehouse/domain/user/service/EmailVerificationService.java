@@ -54,11 +54,11 @@ public class EmailVerificationService {
     // 인증 코드 확인
     public ApiResponse<EmailVerificationResponseDto> verifyEmail(String email, String code) {
         VerificationToken verificationToken = verificationTokenRepository.findByEmailAndCode(email, code)
-                .orElseThrow(() -> new CustomException.InvalidVerificationCodeException(
+                .orElseThrow(() -> new CustomException.VerificationException(
                         getMessage("email.verification.invalid")));
 
         if (isCodeExpired(verificationToken.getExpiryDate())) {
-            throw new CustomException.VerificationCodeExpiredException(
+            throw new CustomException.VerificationException(
                     getMessage("email.verification.expired"));
         }
 

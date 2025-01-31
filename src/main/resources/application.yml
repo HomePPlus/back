@@ -1,89 +1,90 @@
-# 애플리케이션 기본 설정
+# ================ 애플리케이션 기본 설정 ================
 spring:
   application:
-    name: safehouse # 애플리케이션 이름 설정
+    name: safehouse  # 애플리케이션 이름 설정 (모니터링 용이)
 
   config:
-    import: optional:file:.env[.properties]
+    import: optional:file:.env[.properties]  # 환경 변수 파일 로드 설정
 
-  # 데이터베이스 연결 설정
+  # ================ 데이터베이스 연결 설정 ================
   datasource:
     url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB}?serverTimezone=Asia/Seoul&characterEncoding=utf8&useUnicode=true
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    username: ${DB_USER}  # DB 사용자명 (환경 변수에서 주입)
+    password: ${DB_PASSWORD}  # DB 비밀번호 (환경 변수에서 주입)
 
-  # JPA 설정
+  # ================ JPA/Hibernate 설정 ================
   jpa:
     hibernate:
-      ddl-auto: update # 데이터베이스 스키마 자동 업데이트
-    show-sql: true # SQL 쿼리 로그 출력
+      ddl-auto: update  # 개발 단계에서만 사용 (운영환경에선 validate 권장)
+    show-sql: true  # SQL 쿼리 로깅 활성화 (디버깅용)
     properties:
       hibernate:
-        format_sql: true # SQL 쿼리 포맷팅
-        dialect: org.hibernate.dialect.MySQLDialect # 데이터베이스 방언 설정
+        format_sql: true  # SQL 쿼리 포맷팅 (가독성 향상)
+        dialect: org.hibernate.dialect.MySQL8Dialect  # MySQL 8.x 최적화 방언 설정
 
-  # SQL 초기화 설정
+  # ================ SQL 초기화 설정 ================
   sql:
     init:
-      mode: always # SQL 스크립트 항상 실행
-      encoding: UTF-8 # SQL 스크립트 인코딩
+      mode: always  # 애플리케이션 시작 시 schema.sql 실행
+      encoding: UTF-8  # SQL 파일 인코딩
 
+  # ================ MVC 설정 ================
   mvc:
-    charset: UTF-8
+    charset: UTF-8  # 요청/응답 기본 인코딩
 
-  # 이메일 인증 코드
+  # ================ 이메일 서버 설정 ================
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: dbsn0717@gmail.com
-    password: rxwu ucrl wbww qnmd
+    host: smtp.gmail.com  # SMTP 서버 주소
+    port: 587  # TLS 포트
+    username: dbsn0717@gmail.com  # 발신자 이메일
+    password: rxwu ucrl wbww qnmd  # 앱 비밀번호 (보안 주의!)
     properties:
       mail:
         smtp:
-          auth: true
+          auth: true  # SMTP 인증 사용
           starttls:
-            enable: true
+            enable: true  # TLS 암호화 활성화
 
-  # 멀티 파트 요청(모델)
+  # ================ 파일 업로드 설정 ================
   servlet:
     multipart:
-      enabled: true
-      max-file-size: 500MB
-      max-request-size: 500MB
-      resolve-lazily: true # 멀티파트 요청을 필요할 때만 파싱
-      location: ${java.io.tmpdir} # 임시 파일 저장 위치
+      enabled: true  # 멀티파트 요청 처리 활성화
+      max-file-size: 500MB  # 개별 파일 최대 크기
+      max-request-size: 500MB  # 전체 요청 최대 크기
+      resolve-lazily: true  # 지연 로딩 활성화 (대용량 파일 처리용)
+      location: ${java.io.tmpdir}  # 임시 저장 위치
 
-# 서버 인코딩 설정
+# ================ 서버 설정 ================
 server:
   servlet:
     encoding:
-      charset: UTF-8 # 문자 인코딩 설정
-      force: true # 인코딩 강제 적용
-      force-response: true
-      enabled: true # 인코딩 설정 활성화
+      charset: UTF-8  # 문자 인코딩 강제 설정
+      force: true  # 인코딩 강제 적용
+      force-response: true  # 응답 인코딩 강제
+      enabled: true  # 인코딩 필터 활성화
 
-# 로깅 설정
+# ================ 로깅 설정 ================
 logging:
   level:
-    org.springframework.security: DEBUG # 스프링 시큐리티 로그 레벨 설정
+    org.springframework.security: DEBUG  # 시큐리티 디버그 로깅
 
-# 스프링 시큐리티 설정
+# ================ 시큐리티 기본 계정 ================
 spring.security:
   user:
-    name: root # 기본 사용자 이름
-    password: aivle # 기본 사용자 비밀번호
+    name: root  # 개발용 기본 계정 ID
+    password: aivle  # 개발용 기본 계정 PW
 
-# JWT 설정
+# ================ JWT 설정 ================
 jwt:
-  secret: yourSecretKeyHereMustBeLongEnoughForSecurity # JWT 토큰 암호화 키
-  token-validity-in-seconds: 86400 # 24시간
+  secret: yourSecretKeyHereMustBeLongEnoughForSecurity  # 암호화 키 (운영환경에선 환경변수로 관리)
+  token-validity-in-seconds: 86400  # 토큰 유효시간(24시간)
 
-# 파일 업로드 경로
+# ================ 파일 저장 경로 ================
 file:
   upload:
-    path: "C:/Users/User/safehouse_upload_images/"
+    path: "C:/Users/User/safehouse_upload_images/"  # 파일 업로드 절대 경로
 
-# FastAPI 서버 URL
+# ================ 외부 서비스 연동 ================
 fastapi:
   server:
-    url: ${FASTAPI_SERVER_URL:http://localhost:8000} # 환경 변수가 없을 경우 http://localhost:8000을 기본값으로 사용
+    url: ${FASTAPI_SERVER_URL:http://localhost:8000}  # FastAPI 서버 URL (환경변수 우선)

@@ -24,10 +24,10 @@ public class LoginService {
 
     public ApiResponse<LoginResponseDto> login(LoginDto loginDto, HttpServletResponse response) {
         User user = userRepository.findByEmail(loginDto.getEmail())
-                .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            throw new CustomException.PasswordMismatchException(getMessage("password.mismatch"));
+            throw new CustomException.PasswordException(getMessage("password.mismatch"));
         }
 
         if (!user.isEmailVerified()) {

@@ -40,7 +40,7 @@ public class ReportService {
 
     public ApiResponse<ReportResponseDto> createReport(ReportRequestDto request, List<MultipartFile> files) {
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
         Report report = createReportEntity(request, user);
         processImages(report, files);

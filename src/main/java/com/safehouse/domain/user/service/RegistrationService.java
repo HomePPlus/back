@@ -82,7 +82,7 @@ public class RegistrationService {
             throw new CustomException.EmailNotVerifiedException(getMessage("email.not.verified"));
         }
         if (userRepository.existsByEmail(email)) {
-            throw new CustomException.EmailAlreadyExistsException(getMessage("email.duplicate"));
+            throw new CustomException.ConflictException(getMessage("email.duplicate"));
         }
     }
 
