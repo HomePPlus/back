@@ -33,7 +33,32 @@ public class InspectorsCommentController {
 
     @GetMapping("/{communityId}/comments")
     public ResponseEntity<ApiResponse<List<InspectorsCommentResponseDto>>> getComments(
-            @PathVariable Long communityId) {
+            @PathVariable(name = "communityId") Long communityId) {
         return ResponseEntity.ok(inspectorsCommunityService.getComments(communityId));
+    }
+
+    @PutMapping("/{communityId}/comments/{commentId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<InspectorsCommentResponseDto>> updateComment(
+            @PathVariable(name = "communityId") Long communityId,
+            @PathVariable(name = "commentId") Long commentId,
+            @RequestBody InspectorsCommentRequestDto requestDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        return ResponseEntity.ok()
+                .body(inspectorsCommunityService.updateComment(commentId, requestDto, email));
+    }
+
+    @DeleteMapping("/{communityId}/comments/{commentId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<Void>> deleteComment(
+            @PathVariable(name = "communityId") Long communityId,
+            @PathVariable(name = "commentId") Long commentId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        return ResponseEntity.ok()
+                .body(inspectorsCommunityService.deleteComment(commentId, email));
     }
 }
