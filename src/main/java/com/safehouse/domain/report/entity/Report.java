@@ -43,6 +43,3 @@ public class Report {
     @Builder.Default
     private List<ReportImage> images = new ArrayList<>();  // 초기화 추가
 }
-
-
-

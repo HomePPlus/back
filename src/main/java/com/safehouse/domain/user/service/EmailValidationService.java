@@ -22,7 +22,7 @@ public class EmailValidationService {
         }
 
         if (userRepository.existsByEmail(email)) {
-            throw new CustomException.EmailAlreadyExistsException(getMessage("email.duplicate"));
+            throw new CustomException.ConflictException(getMessage("email.duplicate"));
         }
 
         EmailValidationResponseDto responseDto = new EmailValidationResponseDto(

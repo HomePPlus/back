@@ -37,7 +37,7 @@ public class AccountService {
     // 아이디 찾기
     public ApiResponse<FindIdResponseDto> findId(FindIdRequestDto dto) {
         User user = userRepository.findByUserNameAndPhone(dto.getUserName(), dto.getPhone())
-                .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
         String maskedEmail = maskEmail(user.getEmail());
 
@@ -62,7 +62,7 @@ public class AccountService {
     // 비밀번호 재설정 코드 전송
     public ApiResponse<Void> sendPasswordResetCode(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
         String code = generateVerificationCode();
         LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(15); // 15분 유효
@@ -83,10 +83,10 @@ public class AccountService {
     // 비밀번호 재설정 코드 확인
     public ApiResponse<Void> verifyPasswordResetCode(String email, String code) {
         VerificationToken token = verificationTokenRepository.findByEmailAndCode(email, code)
-                .orElseThrow(() -> new CustomException.InvalidVerificationCodeException(getMessage("token.invalid")));
+                .orElseThrow(() -> new CustomException.VerificationException(getMessage("token.invalid")));
 
         if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new CustomException.PasswordResetFailedException(getMessage("token.expired"));
+            throw new CustomException.PasswordException(getMessage("token.expired"));
         }
 
         token.setVerified(true);
@@ -98,14 +98,14 @@ public class AccountService {
     // 새 비밀번호 설정
     public ApiResponse<Void> resetPassword(String email, String newPassword) {
         VerificationToken token = verificationTokenRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException.InvalidVerificationCodeException(getMessage("token.invalid")));
+                .orElseThrow(() -> new CustomException.VerificationException(getMessage("token.invalid")));
 
         if (!token.isVerified()) {
-            throw new CustomException.PasswordResetFailedException(getMessage("token.not.verified"));
+            throw new CustomException.PasswordException(getMessage("token.not.verified"));
         }
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
         log.info("Before password reset: {}", user);
         user.setPassword(passwordEncoder.encode(newPassword));

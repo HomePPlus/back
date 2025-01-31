@@ -23,7 +23,7 @@ public class UserProfileService {
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
         UserProfileResponseDto profileDto = new UserProfileResponseDto(user);
 

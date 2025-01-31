@@ -32,7 +32,7 @@ public class ResidentsCommunityService {
 
     public ApiResponse<ResidentsCommunityResponseDto> createPost(ResidentsCommunityRequestDto requestDto, String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
         ResidentsCommunity community = ResidentsCommunity.builder()
                 .communityTitle(requestDto.getCommunityTitle())
@@ -52,7 +52,7 @@ public class ResidentsCommunityService {
     @Transactional
     public ApiResponse<ResidentsCommunityResponseDto> getPost(Long postId) {
         ResidentsCommunity community = communityRepository.findByIdWithUser(postId)
-                .orElseThrow(() -> new CustomException.PostNotExist(getMessage("post.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("post.not.found")));
 
         List<ResidentsCommentResponseDto> comments = residentsCommentRepository
                 .findByResidentCommunity(community)
@@ -86,7 +86,7 @@ public class ResidentsCommunityService {
 
     public ApiResponse<ResidentsCommunityResponseDto> updatePost(Long communityPostId, ResidentsCommunityRequestDto requestDto) {
         ResidentsCommunity community = communityRepository.findById(communityPostId)
-                .orElseThrow(() -> new CustomException.PostNotExist(getMessage("post.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("post.not.found")));
 
         community.update(requestDto.getCommunityTitle(), requestDto.getCommunityContent());
         return new ApiResponse<>(
@@ -98,7 +98,7 @@ public class ResidentsCommunityService {
 
     public ApiResponse<Void> deletePost(Long communityPostId) {
         ResidentsCommunity community = communityRepository.findById(communityPostId)
-                .orElseThrow(() -> new CustomException.PostNotExist(getMessage("post.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("post.not.found")));
         communityRepository.delete(community);
         return new ApiResponse<>(
                 200,
@@ -122,17 +122,17 @@ public class ResidentsCommunityService {
 
     public boolean isOwner(Long communityPostId, String userEmail) {
         ResidentsCommunity community = communityRepository.findById(communityPostId)
-                .orElseThrow(() -> new CustomException.PostNotOwner(getMessage("post.not.owner")));
+                .orElseThrow(() -> new CustomException.ForbiddenException(getMessage("post.not.owner")));
         return community.getUser().getEmail().equals(userEmail);
     }
 
     @Transactional
     public ApiResponse createComment(Long communityId, ResidentsCommentRequestDto requestDto, String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
         ResidentsCommunity community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new CustomException.PostNotExist(getMessage("post.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("post.not.found")));
 
         ResidentsComment comment = ResidentsComment.builder()
                 .residentsContent(requestDto.getResidentsContent())
@@ -152,7 +152,7 @@ public class ResidentsCommunityService {
 
     public ApiResponse<List<ResidentsCommentResponseDto>> getComments(Long communityId) {
         ResidentsCommunity community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new CustomException.PostNotExist(getMessage("post.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("post.not.found")));
 
         List<ResidentsCommentResponseDto> comments = residentsCommentRepository.findByResidentCommunity(community)
                 .stream()
@@ -169,7 +169,7 @@ public class ResidentsCommunityService {
     @Transactional
     public ApiResponse deleteComment(Long commentId, String email) {
         ResidentsComment comment = residentsCommentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException.ResourceNotFoundException(getMessage("comment.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("comment.not.found")));
 
         if (!comment.getUser().getEmail().equals(email)) {
             throw new CustomException.UnauthorizedException(getMessage("comment.not.owner"));
@@ -188,7 +188,7 @@ public class ResidentsCommunityService {
     @Transactional
     public ApiResponse updateComment(Long commentId, ResidentsCommentRequestDto requestDto, String email) {
         ResidentsComment comment = residentsCommentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException.ResourceNotFoundException(getMessage("comment.not.found")));
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("comment.not.found")));
 
         if (!comment.getUser().getEmail().equals(email)) {
             throw new CustomException.UnauthorizedException(getMessage("comment.not.owner"));

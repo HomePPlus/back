@@ -1,6 +1,13 @@
 package com.safehouse.common.exception;
 
 public class CustomException {
+    // 잘못된 요청 (클라이언트 오류)에 대한 예외
+    public static class BadRequestException extends RuntimeException {
+        public BadRequestException(String message) {
+            super(message);
+        }
+    }
+
     // 입력값이 유효하지 않을 때 발생하는 예외 (필수 파라미터 누락, 잘못된 형식의 입력값 등)
     public static class InvalidInputException extends RuntimeException {
         public InvalidInputException(String message) {
@@ -8,30 +15,23 @@ public class CustomException {
         }
     }
 
-    // 사용자를 찾을 수 없을 때 발생하는 예외
-    public static class UserNotFoundException extends RuntimeException {
-        public UserNotFoundException(String message) {
+    // 요청한 리소스(사용자, 게시글, 일정 등)를 찾을 수 없을 때 발생하는 예외
+    public static class NotFoundException extends RuntimeException {
+        public NotFoundException(String message) {
             super(message);
         }
     }
 
-    // 이미 존재하는 이메일로 회원가입을 시도할 때 발생하는 예외
-    public static class EmailAlreadyExistsException extends RuntimeException {
-        public EmailAlreadyExistsException(String message) {
+    // 이미 존재하는 리소스(이메일, 일정 등)로 인해 충돌이 발생할 때의 예외
+    public static class ConflictException extends RuntimeException {
+        public ConflictException(String message) {
             super(message);
         }
     }
 
-    // 인증 코드가 만료되었을 때 발생하는 예외
-    public static class VerificationCodeExpiredException extends RuntimeException {
-        public VerificationCodeExpiredException(String message) {
-            super(message);
-        }
-    }
-
-    // 잘못된 인증 코드를 입력했을 때 발생하는 예외
-    public static class InvalidVerificationCodeException extends RuntimeException {
-        public InvalidVerificationCodeException(String message) {
+    // 인증 코드 관련 예외 (만료, 잘못된 코드)
+    public static class VerificationException extends RuntimeException {
+        public VerificationException(String message) {
             super(message);
         }
     }
@@ -43,23 +43,9 @@ public class CustomException {
         }
     }
 
-    // 비밀번호가 일치하지 않을 때 발생하는 예외
-    public static class PasswordMismatchException extends RuntimeException {
-        public PasswordMismatchException(String message) {
-            super(message);
-        }
-    }
-
-    // 신고 내용이 비어있을 때 발생하는 예외
-    public static class InvalidRequestException extends RuntimeException {
-        public InvalidRequestException(String message) {
-            super(message);
-        }
-    }
-
-    // JSON 형식이 잘못되었을 때 발생하는 예외
-    public static class InvalidJsonFormatException extends RuntimeException {
-        public InvalidJsonFormatException(String message) {
+    // 비밀번호 관련 예외 (불일치, 재설정 실패)
+    public static class PasswordException extends RuntimeException {
+        public PasswordException(String message) {
             super(message);
         }
     }
@@ -71,54 +57,23 @@ public class CustomException {
         }
     }
 
-    // 비밀번호 재설정 과정에서 문제가 발생했을 때 발생하는 예외
-    public static class PasswordResetFailedException extends RuntimeException {
-        public PasswordResetFailedException(String message) {
-            super(message);
-        }
-    }
-
     // 이메일 전송 실패 시 발생하는 예외
     public static class EmailSendingFailedException extends RuntimeException {
         public EmailSendingFailedException(String message) {
             super(message);
         }
     }
-    // 일정 관리 예외
-    public static class NotFoundException extends RuntimeException {
-        public NotFoundException(String message) {
-            super(message);
-        }
-    }
 
+    // 인증되지 않은 사용자가 접근을 시도할 때 발생하는 예외
     public static class UnauthorizedException extends RuntimeException {
         public UnauthorizedException(String message) {
             super(message);
         }
     }
-    // 중복 예약 예외 처리
-    public static class DuplicateScheduleException extends RuntimeException {
-        public DuplicateScheduleException(String message) {
-            super(message);
-        }
-    }
-    //게시글이 없을때 발생하는 예외
-    public static class PostNotExist extends RuntimeException{
-        public PostNotExist(String message){
-            super(message);
-        }
-    }
 
-    //게시글이 본인것이 아닐때
-    public static class PostNotOwner extends RuntimeException{
-        public PostNotOwner(String message){
-            super(message);
-        }
-    }
-
-
-    public static class ResourceNotFoundException extends RuntimeException{
-        public ResourceNotFoundException(String message){
+    // 접근 권한이 없는 리소스에 접근을 시도할 때 발생하는 예외
+    public static class ForbiddenException extends RuntimeException {
+        public ForbiddenException(String message) {
             super(message);
         }
     }
