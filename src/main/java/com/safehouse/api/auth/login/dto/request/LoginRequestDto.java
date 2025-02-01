@@ -7,10 +7,11 @@ import lombok.Setter;
 
 @Getter @Setter
 @NoArgsConstructor
-public class LoginDto {
+public class LoginRequestDto {
     @NotBlank(message = "{email.notblank}")
     private String email;
 
     @NotBlank(message = "{password.notblank}")
     private String password;
+
 }

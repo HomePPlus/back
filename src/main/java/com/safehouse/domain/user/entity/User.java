@@ -62,6 +62,10 @@ public class User implements UserDetails {
         this.userName = userName;
     }
 
+    public String getUserType() {
+        return this.role.split("_")[0]; // ROLE_ 접두사 제거
+    }
+
     //UserDetails로 변환하기 위해 필요
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -92,4 +96,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return this.emailVerified;
     }
+
+
 }

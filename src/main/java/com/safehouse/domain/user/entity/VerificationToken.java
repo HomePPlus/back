@@ -1,8 +1,6 @@
 package com.safehouse.domain.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +13,10 @@ import java.time.LocalDateTime;
 @Table(name = "verification_tokens")
 public class VerificationToken {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long token_id;
+
+    @Column(unique = true)
     private String email;
 
     private String code;

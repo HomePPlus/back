@@ -34,17 +34,13 @@ public class LoginService {
             throw new CustomException.EmailNotVerifiedException(getMessage("email.not.verified"));
         }
 
-        String token = jwtTokenProvider.createToken(user.getEmail());
-
-        // 토큰을 쿠키에 저장
+        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole());
         jwtTokenProvider.addTokenToCookie(token, response);
-
-        LoginResponseDto responseDto = new LoginResponseDto(getMessage("login.success"));
 
         return new ApiResponse<>(
                 200,
                 getMessage("login.success"),
-                responseDto
+                new LoginResponseDto(getMessage("login.success"), user.getRole())
         );
     }
 

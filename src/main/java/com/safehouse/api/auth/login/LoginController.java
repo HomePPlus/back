@@ -1,6 +1,6 @@
 package com.safehouse.api.auth.login;
 
-import com.safehouse.api.auth.login.dto.request.LoginDto;
+import com.safehouse.api.auth.login.dto.request.LoginRequestDto;
 import com.safehouse.api.auth.login.dto.response.LoginResponseDto;
 import com.safehouse.common.response.ApiResponse;
 import com.safehouse.domain.auth.service.LoginService;
@@ -20,9 +20,9 @@ public class LoginController {
 
     @PostMapping("/login")
     public ApiResponse<LoginResponseDto> login(
-            @RequestBody @Valid LoginDto loginDto,
+            @RequestBody @Valid LoginRequestDto loginRequestDto,
             HttpServletResponse response // 여기도 확인
     ) {
-        return userService.login(loginDto, response);
+        return userService.login(loginRequestDto, response);
     }
 }
