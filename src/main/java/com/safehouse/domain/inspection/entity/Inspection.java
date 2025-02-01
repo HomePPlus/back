@@ -3,8 +3,11 @@ import com.safehouse.domain.report.entity.Report;
 import com.safehouse.domain.user.entity.Inspector;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "inspections")
@@ -37,6 +40,15 @@ public class Inspection {
     @Column(name = "end_date")
     private LocalDate endDate;
     private String description;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;  // 생성일시
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;   // 수정일시
+
 
     @Builder
     public Inspection(InspectionType type, Report report, Inspector inspector,

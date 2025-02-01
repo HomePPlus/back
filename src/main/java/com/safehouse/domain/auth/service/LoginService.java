@@ -5,7 +5,7 @@ import com.safehouse.common.exception.CustomException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.i18n.LocaleContextHolder;
 import com.safehouse.domain.user.entity.User;
-import com.safehouse.api.auth.login.dto.request.LoginDto;
+import com.safehouse.api.auth.login.dto.request.LoginRequestDto;
 import com.safehouse.domain.user.repository.UserRepository;
 import com.safehouse.common.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class LoginService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MessageSource messageSource;
 
-    public ApiResponse<LoginResponseDto> login(LoginDto loginDto, HttpServletResponse response) {
+    public ApiResponse<LoginResponseDto> login(LoginRequestDto loginDto, HttpServletResponse response) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
