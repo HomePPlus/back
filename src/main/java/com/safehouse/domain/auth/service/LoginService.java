@@ -5,7 +5,7 @@ import com.safehouse.common.exception.CustomException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.i18n.LocaleContextHolder;
 import com.safehouse.domain.user.entity.User;
-import com.safehouse.api.auth.login.dto.request.LoginDto;
+import com.safehouse.api.auth.login.dto.request.LoginRequestDto;
 import com.safehouse.domain.user.repository.UserRepository;
 import com.safehouse.common.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +22,11 @@ public class LoginService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MessageSource messageSource;
 
-    public ApiResponse<LoginResponseDto> login(LoginDto loginDto, HttpServletResponse response) {
-        User user = userRepository.findByEmail(loginDto.getEmail())
+    public ApiResponse<LoginResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new CustomException.UserNotFoundException(getMessage("user.not.found")));
 
-        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
             throw new CustomException.PasswordMismatchException(getMessage("password.mismatch"));
         }
 
@@ -34,17 +34,13 @@ public class LoginService {
             throw new CustomException.EmailNotVerifiedException(getMessage("email.not.verified"));
         }
 
-        String token = jwtTokenProvider.createToken(user.getEmail());
-
-        // 토큰을 쿠키에 저장
+        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole());
         jwtTokenProvider.addTokenToCookie(token, response);
-
-        LoginResponseDto responseDto = new LoginResponseDto(getMessage("login.success"));
 
         return new ApiResponse<>(
                 200,
                 getMessage("login.success"),
-                responseDto
+                new LoginResponseDto(getMessage("login.success"), user.getRole())
         );
     }
 

@@ -62,6 +62,9 @@ public class SecurityConfig {
                                 "/**/*.css",
                                 "/**/*.js"
                         ).permitAll()
+                        // 역할 기반 접근 제어
+                        .requestMatchers("/api/inspector/**").hasAnyAuthority("ROLE_INSPECTOR", "ROLE_ADMIN")
+                        .requestMatchers("/api/resident/**").hasAuthority("ROLE_RESIDENT")
                         // 로그아웃은 인증된 사용자만
                         .requestMatchers("/api/auth/logout").authenticated()
                         .anyRequest().authenticated()

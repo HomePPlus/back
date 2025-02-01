@@ -28,13 +28,14 @@ public class JwtTokenProvider {
                             @Value("${jwt.token-validity-in-seconds}") long validityInSeconds,
                             UserDetailsService userDetailsService) {
         this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        this.validityInMilliseconds = validityInSeconds * 1000;
+        this.validityInMilliseconds = validityInSeconds * 1000L;
         this.userDetailsService = userDetailsService;
     }
 
     // 토큰 생성
-    public String createToken(String email) {
+    public String createToken(String email, String role) {
         Claims claims = Jwts.claims().setSubject(email);
+        claims.put("role", role); // 사용자 역할 저장
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
@@ -42,7 +43,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 

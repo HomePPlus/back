@@ -76,7 +76,7 @@ spring.security:
 # JWT 설정
 jwt:
   secret: yourSecretKeyHereMustBeLongEnoughForSecurity # JWT 토큰 암호화 키
-  token-validity-in-seconds: 86400 # 24시간
+  token-validity-in-seconds: 1800 # 30분
 
 # 파일 업로드 경로
 file:
