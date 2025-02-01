@@ -166,6 +166,7 @@ public class InspectionService {
         return ApiResponse.ok(statistics);
     }
 
+    // 오늘 예약 조회
     @Transactional(readOnly = true)
     public ApiResponse<List<InspectionDetailResponse>> getTodayInspections(String email) {
         // 점검자 조회

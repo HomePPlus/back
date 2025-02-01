@@ -47,8 +47,9 @@ public class SecurityConfig {
                                 "/api/schedules/**",  // 일정관리 API
                                 "/api/health",      // 서버 상태 확인 API
                                 "/api/inspector_communities/**",
-                                "/api/model/**",       // model
-                                "api/inspections/**"    // 점검 API
+                                "/api/model/**",            // model
+                                "api/inspections/**",       // 점검 API
+                                "api/dashboard/**"          // 대시보드
                         ).permitAll()
                         // 정적 리소스
                         .requestMatchers(

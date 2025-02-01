@@ -77,4 +77,19 @@ public class CustomException {
             super(message);
         }
     }
+
+    // 지역 검증 실패 예외
+    public static class InvalidAreaException extends BadRequestException {
+        public InvalidAreaException(String message) {
+            super(message);
+        }
+    }
+
+    // 통계 데이터 없음 예외
+    public static class NoStatsDataException extends NotFoundException {
+        public NoStatsDataException(String message) {
+            super(message);
+        }
+    }
+
 }
