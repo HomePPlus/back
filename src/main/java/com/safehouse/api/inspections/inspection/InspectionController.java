@@ -121,4 +121,12 @@ public class InspectionController {
     ) {
         return inspectionService.getAreaInspectionStatistics(area);
     }
+
+    // 오늘 예약 현황 조회
+    @GetMapping("/today")
+    public ApiResponse<List<InspectionDetailResponse>> getTodayInspections(
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        return inspectionService.getTodayInspections(user.getUsername());
+    }
 }

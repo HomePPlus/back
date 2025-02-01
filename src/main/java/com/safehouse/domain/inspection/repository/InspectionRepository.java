@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface InspectionRepository extends JpaRepository<Inspection, Long> {
 
@@ -33,4 +34,7 @@ public interface InspectionRepository extends JpaRepository<Inspection, Long> {
 
     // 특정 점검자, 날짜, 신고ID에 대한 점검 존재 여부 확인 (동일 신고에 대한 중복 점검 방지에 사용)
     boolean existsByInspectorAndScheduleDateAndReport_ReportId(Inspector inspector, LocalDate scheduleDate, Long reportId);
+
+    // 오늘 예약 현황 조회
+    List<Inspection> findByInspectorAndScheduleDate(Inspector inspector, LocalDate scheduleDate);
 }

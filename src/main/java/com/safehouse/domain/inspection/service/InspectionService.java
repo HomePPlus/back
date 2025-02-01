@@ -166,6 +166,27 @@ public class InspectionService {
         return ApiResponse.ok(statistics);
     }
 
+    @Transactional(readOnly = true)
+    public ApiResponse<List<InspectionDetailResponse>> getTodayInspections(String email) {
+        // 점검자 조회
+        Inspector inspector = inspectorRepository.findByUser_Email(email)
+                .orElseThrow(() -> new CustomException.NotFoundException(
+                        messageSource.getMessage("inspector.not.found", null, Locale.KOREAN)
+                ));
+
+        List<Inspection> inspections = inspectionRepository
+                .findByInspectorAndScheduleDate(inspector, LocalDate.now());
+
+        String messageKey = inspections.isEmpty()
+                ? "inspection.today.empty"
+                : "inspection.today.success";
+
+        return ApiResponse.ok(
+                messageSource.getMessage(messageKey, null, LocaleContextHolder.getLocale()),
+                convertToDtos(inspections)
+        );
+    }
+
     // === 내부 메서드 ===
     private Report validateReport(Long reportId, Inspector inspector) {
         Report report = reportRepository.findById(reportId)
