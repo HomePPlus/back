@@ -166,8 +166,7 @@ public class InspectionService {
         return ApiResponse.ok(statistics);
     }
 
-    @Transactional(readOnly = true)
-    public ApiResponse<List<InspectionDetailResponse>> getTodayInspections(String email) {
+    public ApiResponse<List<InspectionDetailResponse>> getInspectionsByDate(String email, LocalDate date) {
         // 점검자 조회
         Inspector inspector = inspectorRepository.findByUser_Email(email)
                 .orElseThrow(() -> new CustomException.NotFoundException(
@@ -175,7 +174,7 @@ public class InspectionService {
                 ));
 
         List<Inspection> inspections = inspectionRepository
-                .findByInspectorAndScheduleDate(inspector, LocalDate.now());
+                .findByInspectorAndScheduleDate(inspector, date);
 
         String messageKey = inspections.isEmpty()
                 ? "inspection.today.empty"
@@ -186,6 +185,7 @@ public class InspectionService {
                 convertToDtos(inspections)
         );
     }
+
 
     // === 내부 메서드 ===
     private Report validateReport(Long reportId, Inspector inspector) {

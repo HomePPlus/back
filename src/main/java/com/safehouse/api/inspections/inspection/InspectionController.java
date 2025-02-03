@@ -10,6 +10,7 @@ import com.safehouse.domain.inspection.entity.InspectionType;
 import com.safehouse.domain.inspection.service.InspectionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -124,9 +125,13 @@ public class InspectionController {
 
     // 오늘 예약 현황 조회
     @GetMapping("/today")
-    public ApiResponse<List<InspectionDetailResponse>> getTodayInspections(
+    public ApiResponse<List<InspectionDetailResponse>> getInspectionsByDate(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @AuthenticationPrincipal UserDetails user
     ) {
-        return inspectionService.getTodayInspections(user.getUsername());
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        return inspectionService.getInspectionsByDate(user.getUsername(), date);
     }
 }
