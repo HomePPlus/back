@@ -102,6 +102,7 @@ public class JwtTokenProvider {
      * @param response HTTP 응답 객체
      */
     public void addTokenToCookie(String token, HttpServletResponse response) {
+        // HttpOnly 쿠키에 토큰 저장 (보안용)
         // HTTP-Only 쿠키 생성
         Cookie cookie = new Cookie("JWT_TOKEN", token);
 
@@ -115,6 +116,14 @@ public class JwtTokenProvider {
 
         // 응답에 쿠키 추가
         response.addCookie(cookie);
+
+         // 인증 상태 쿠키 추가 (프론트엔드용)
+        Cookie isAuthenticatedCookie = new Cookie("isAuthenticated", "true");
+        isAuthenticatedCookie.setHttpOnly(false);
+        isAuthenticatedCookie.setSecure(true);
+        isAuthenticatedCookie.setPath("/");
+        isAuthenticatedCookie.setMaxAge((int) (validityInMilliseconds / 1000));
+        response.addCookie(isAuthenticatedCookie);
     }
 
     /*
