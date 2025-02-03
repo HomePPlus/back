@@ -167,8 +167,7 @@ public class InspectionService {
     }
 
     // 오늘 예약 조회
-    @Transactional(readOnly = true)
-    public ApiResponse<List<InspectionDetailResponse>> getTodayInspections(String email) {
+    public ApiResponse<List<InspectionDetailResponse>> getInspectionsByDate(String email, LocalDate date) {
         // 점검자 조회
         Inspector inspector = inspectorRepository.findByUser_Email(email)
                 .orElseThrow(() -> new CustomException.NotFoundException(
@@ -187,6 +186,7 @@ public class InspectionService {
                 convertToDtos(inspections)
         );
     }
+
 
 
     // === 내부 메서드 ===
