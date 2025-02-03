@@ -11,9 +11,42 @@ import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
 
+//public class JwtAuthenticationFilter extends OncePerRequestFilter {
+//
+//    private JwtTokenProvider jwtTokenProvider;
+//
+//    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+//        this.jwtTokenProvider = jwtTokenProvider;
+//    }
+//
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+//            throws ServletException, IOException {
+//        String token = jwtTokenProvider.resolveToken(request);
+//
+//        if (token != null && jwtTokenProvider.validateToken(token)) {
+//            if (jwtTokenProvider.isTokenBlacklisted(token)) {
+//                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is blacklisted");
+//                return;
+//            }
+//            Authentication auth = jwtTokenProvider.getAuthentication(token);
+//            SecurityContextHolder.getContext().setAuthentication(auth);
+//        }
+//
+//        filterChain.doFilter(request, response);
+//    }
+//
+//    private String extractToken(HttpServletRequest request) {
+//        String bearerToken = request.getHeader("Authorization");
+//        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+//            return bearerToken.substring(7);
+//        }
+//        return null;
+//    }
+//}
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -22,26 +55,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String token = jwtTokenProvider.resolveToken(request);
+        try {
+            String token = jwtTokenProvider.resolveToken(request);
+            System.out.println("Processing token: " + token);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            if (jwtTokenProvider.isTokenBlacklisted(token)) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is blacklisted");
-                return;
+            if (token != null && jwtTokenProvider.validateToken(token)) {
+                Authentication auth = jwtTokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                System.out.println("Authentication set for user: " + auth.getName());
             }
-            Authentication auth = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        } catch (Exception e) {
+            System.out.println("Authentication failed: " + e.getMessage());
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
     }
-
-    private String extractToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
-
 }
+

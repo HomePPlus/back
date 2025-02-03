@@ -97,5 +97,7 @@ public class User implements UserDetails {
         return this.emailVerified;
     }
 
-
+    public Long getId() {
+        return userId;
+    }
 }

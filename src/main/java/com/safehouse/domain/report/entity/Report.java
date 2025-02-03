@@ -1,5 +1,7 @@
 package com.safehouse.domain.report.entity;
 
+import com.safehouse.api.reports.request.ReportRequestDto;
+import com.safehouse.common.service.AddressUtil;
 import com.safehouse.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,7 +41,13 @@ public class Report {
     @Column(nullable = false)
     private String defectType;
 
-    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<ReportImage> images = new ArrayList<>();  // 초기화 추가
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReportImage> images = new ArrayList<>();
+
+    public void update(ReportRequestDto request) {
+        this.reportDetailAddress = request.getReportDetailAddress();
+        this.defectType = request.getDefectType();
+        this.reportDescription = request.getReportDescription();
+        this.area = AddressUtil.extractDistrict(request.getReportDetailAddress());
+    }
 }
