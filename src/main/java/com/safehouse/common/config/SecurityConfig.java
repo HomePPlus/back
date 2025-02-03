@@ -128,7 +128,8 @@ public class SecurityConfig {
                                 "/api/inspector_communities/**",
                                 "/api/model/**",
                                 "/api/inspections/**",
-                                "/api/dashboard/**"
+                                "/api/dashboard/**",
+                                "/api/user_reports/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/",
