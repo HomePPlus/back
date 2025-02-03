@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
+/**
+ * 결함 탐지 요청을 처리하는 컨트롤러 클래스.
+ */
 @RestController
 @RequestMapping("/api/model")
 public class DetectionController {
@@ -20,11 +22,17 @@ public class DetectionController {
         this.detectionService = detectionService;
     }
 
+    /**
+     * 이미지 파일을 업로드 받아 결함 탐지 결과를 반환합니다.
+     *
+     * @param file 업로드된 이미지 파일
+     * @return ResponseEntity<ApiResponse<DetectionResponse>> 형식의 응답
+     */
     @PostMapping(value = "/detect")
-    public ResponseEntity<ApiResponse<List<DetectionResponse.Detection>>> detectImage(
+    public ResponseEntity<ApiResponse<DetectionResponse>> detectImage(
             @RequestParam("file") MultipartFile file) {
         try {
-            ApiResponse<List<DetectionResponse.Detection>> response = detectionService.getDetection(file);
+            ApiResponse<DetectionResponse> response = detectionService.getDetection(file);
             return ResponseEntity.ok(response);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -32,4 +40,3 @@ public class DetectionController {
         }
     }
 }
-

@@ -14,8 +14,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import java.io.IOException;
-import java.util.List;
 
+/**
+ * 결함 탐지 요청을 처리하는 서비스 클래스.
+ */
 @Service
 public class DetectionService {
     private final RestTemplate restTemplate;
@@ -29,7 +31,15 @@ public class DetectionService {
         this.fastApiUrl = fastApiUrl + "/detect";
     }
 
-    public ApiResponse<List<DetectionResponse.Detection>> getDetection(MultipartFile file) throws IOException {
+    /**
+     * 이미지 파일을 FastAPI 서버로 전송하고, 결함 탐지 결과를 반환합니다.
+     *
+     * @param file 업로드된 이미지 파일
+     * @return ApiResponse<DetectionResponse> 형식의 응답
+     * @throws IOException 파일 처리 중 오류 발생 시
+     */
+    public ApiResponse<DetectionResponse> getDetection(MultipartFile file) throws IOException {
+        // 멀티파트 요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -50,6 +60,7 @@ public class DetectionService {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
+        // FastAPI 서버에 요청 전송
         ResponseEntity<DetectionResponse> responseEntity = restTemplate.exchange(
                 fastApiUrl,
                 HttpMethod.POST,
@@ -58,12 +69,12 @@ public class DetectionService {
         );
 
         DetectionResponse response = responseEntity.getBody();
-        List<DetectionResponse.Detection> detections = response != null ? response.getDetections() : null;
 
+        // 성공 응답 생성
         return new ApiResponse<>(
                 200,
                 getMessage("detection.success"),
-                detections
+                response
         );
     }
 
