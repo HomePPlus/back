@@ -22,7 +22,7 @@ public class LogoutService {
         Cookie cookie = new Cookie("JWT_TOKEN", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
         cookie.setSecure(true);
         response.addCookie(cookie);
         

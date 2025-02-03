@@ -173,7 +173,7 @@ public class JwtTokenProvider {
         Cookie cookie = new Cookie("JWT_TOKEN", token);
 
         // 쿠키 보안 설정
-        cookie.setHttpOnly(true);  // JavaScript로 쿠키 접근 방지
+        cookie.setHttpOnly(false);  // JavaScript로 쿠키 접근 방지
         cookie.setSecure(true);    // HTTPS에서만 쿠키 전송
         cookie.setPath("/");       // 전체 애플리케이션에서 쿠키 사용
 
@@ -198,11 +198,12 @@ public class JwtTokenProvider {
      */
     public void invalidateCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("JWT_TOKEN", null);
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(0);  // 쿠키 즉시 만료
         response.addCookie(cookie);
+
     }
 
 
