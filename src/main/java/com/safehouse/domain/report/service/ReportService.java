@@ -34,24 +34,25 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final UserRepository userRepository;
     private final MessageSource messageSource;
+    private boolean shouldDeleteExistingImages;
 
     @Value("${file.upload.path}")
     private String fileUploadPath;
 
-    public ApiResponse<ReportResponseDto> createReport(ReportRequestDto request, List<MultipartFile> files) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
+public ApiResponse<ReportResponseDto> createReport(Long userId, ReportRequestDto request, List<MultipartFile> files) {
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
 
-        Report report = createReportEntity(request, user);
-        processImages(report, files);
-        Report savedReport = reportRepository.save(report);
+    Report report = createReportEntity(request, user);
+    processImages(report, files);
+    Report savedReport = reportRepository.save(report);
 
-        return new ApiResponse<>(
-                HttpStatus.CREATED.value(),
-                getMessage("report.create.success"),
-                convertToResponse(savedReport)
-        );
-    }
+    return new ApiResponse<>(
+            HttpStatus.CREATED.value(),
+            getMessage("report.create.success"),
+            convertToResponse(savedReport)
+    );
+}
 
 
     private ReportResponseDto convertToResponse(Report report) {
@@ -113,6 +114,89 @@ public class ReportService {
                 .report(report)
                 .build();
         report.getImages().add(reportImage);
+    }
+
+    // 전체 조회
+    public ApiResponse<List<ReportResponseDto>> getAllReports() {
+        List<Report> reports = reportRepository.findAll();
+        List<ReportResponseDto> responseDtos = reports.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                getMessage("report.fetch.success"),
+                responseDtos
+        );
+    }
+
+    // 상세 조회
+    public ApiResponse<ReportResponseDto> getReportDetail(Long reportId) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("report.not.found")));
+
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                getMessage("report.detail.success"),
+                convertToResponse(report)
+        );
+    }
+
+    // 수정
+    public ApiResponse<ReportResponseDto> updateReport(Long reportId, Long userId, ReportRequestDto request, List<MultipartFile> newImages) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("report.not.found")));
+
+        if (!report.getUser().getId().equals(userId)) {
+            throw new CustomException.UnauthorizedException(getMessage("report.unauthorized"));
+        }
+
+        report.update(request);
+
+        // 새로운 이미지가 있는 경우
+        if (newImages != null && !newImages.isEmpty()) {
+            // 기존 이미지 삭제 여부를 선택적으로 처리
+            if (shouldDeleteExistingImages) {
+                deleteExistingImages(report);
+            }
+            processImages(report, newImages);
+        }
+
+        Report updatedReport = reportRepository.save(report);
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                getMessage("report.update.success"),
+                convertToResponse(updatedReport)
+        );
+    }
+
+    private void deleteExistingImages(Report report) {
+        for (ReportImage image : report.getImages()) {
+            File file = new File(image.getReportImageUrl());
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+        report.getImages().clear();
+    }
+
+    // 삭제
+    public ApiResponse<?> deleteReport(Long reportId, Long userId) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("report.not.found")));
+
+        if (!report.getUser().getId().equals(userId)) {
+            throw new CustomException.UnauthorizedException(getMessage("report.unauthorized"));
+        }
+
+        deleteExistingImages(report);
+        reportRepository.delete(report);
+
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                getMessage("report.delete.success"),
+                null
+        );
     }
 
     private String getMessage(String code) {

@@ -35,7 +35,7 @@ public class JwtTokenProvider {
     // 토큰 생성
     public String createToken(String email, String role) {
         Claims claims = Jwts.claims().setSubject(email);
-        claims.put("role", role); // 사용자 역할 저장
+        claims.put("role", role);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
@@ -43,22 +43,41 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     // 토큰 검증
+//    public boolean validateToken(String token) {
+//        try {
+//            if (isTokenBlacklisted(token)) {
+//                return false;
+//            }
+//            Jwts.parserBuilder()
+//                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+//                    .build()
+//                    .parseClaimsJws(token);
+//            return true;
+//        } catch (JwtException | IllegalArgumentException e) {
+//            return false;
+//        }
+//    }
     public boolean validateToken(String token) {
         try {
             if (isTokenBlacklisted(token)) {
+                System.out.println("Token is blacklisted");
                 return false;
             }
-            Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))  // createToken과 동일한 방식으로 수정
                     .build()
                     .parseClaimsJws(token);
-            return true;
+
+            boolean isValid = !claims.getBody().getExpiration().before(new Date());
+            System.out.println("Token validation result: " + isValid);
+            return isValid;
         } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("Token validation failed: " + e.getMessage());
             return false;
         }
     }
@@ -83,18 +102,65 @@ public class JwtTokenProvider {
         return tokenBlacklist.contains(token);
     }
     // 요청에서 토큰 추출
+//    public String resolveToken(HttpServletRequest request) {
+//        String bearerToken = request.getHeader("Authorization");
+//        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+//            return bearerToken.substring(7);
+//        }
+//        return null;
+//    }
     public String resolveToken(HttpServletRequest request) {
+        // 헤더에서 토큰 찾기
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+            String token = bearerToken.substring(7).trim();
+            System.out.println("Found token in header: " + token);
+            return token;
         }
+
+        // 쿠키에서 토큰 찾기
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("JWT_TOKEN".equals(cookie.getName())) {
+                    System.out.println("Found token in cookie: " + cookie.getValue());
+                    return cookie.getValue();
+                }
+            }
+        }
+        System.out.println("No token found in request");
         return null;
     }
 
     // 인증 정보 생성
+//    public Authentication getAuthentication(String token) {
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(getEmailFromToken(token));
+//        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+//    }
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getEmailFromToken(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            String username = claims.getSubject();
+            String role = claims.get("role", String.class);
+
+            // DB에서 사용자 정보 조회
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            // 토큰의 role과 DB의 role이 일치하는지 확인
+            if (!userDetails.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_" + role))) {
+                throw new JwtException("Invalid role in token");
+            }
+
+            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        } catch (Exception e) {
+            throw new JwtException("Failed to authenticate token");
+        }
     }
     /*
      * JWT 토큰을 HTTP-Only 쿠키에 추가하는 메서드
@@ -102,6 +168,7 @@ public class JwtTokenProvider {
      * @param response HTTP 응답 객체
      */
     public void addTokenToCookie(String token, HttpServletResponse response) {
+        // HttpOnly 쿠키에 토큰 저장 (보안용)
         // HTTP-Only 쿠키 생성
         Cookie cookie = new Cookie("JWT_TOKEN", token);
 
@@ -115,6 +182,14 @@ public class JwtTokenProvider {
 
         // 응답에 쿠키 추가
         response.addCookie(cookie);
+
+         // 인증 상태 쿠키 추가 (프론트엔드용)
+        Cookie isAuthenticatedCookie = new Cookie("isAuthenticated", "true");
+        isAuthenticatedCookie.setHttpOnly(false);
+        isAuthenticatedCookie.setSecure(true);
+        isAuthenticatedCookie.setPath("/");
+        isAuthenticatedCookie.setMaxAge((int) (validityInMilliseconds / 1000));
+        response.addCookie(isAuthenticatedCookie);
     }
 
     /*

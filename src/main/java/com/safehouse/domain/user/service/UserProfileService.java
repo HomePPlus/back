@@ -34,6 +34,16 @@ public class UserProfileService {
         );
     }
 
+    public Long getUserIdByEmail(String email) {
+        User user = getUserByEmail(email);
+        return user.getId();
+    }
+
+    private User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException.NotFoundException(getMessage("user.not.found")));
+    }
+
     private String getMessage(String code) {
         return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
     }

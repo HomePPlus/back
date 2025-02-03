@@ -58,7 +58,7 @@ public class InspectionController {
     // 점검 목록 조회 (타입 필터링)
     @GetMapping
     public ApiResponse<List<InspectionDetailResponse>> getInspections(
-            @RequestParam InspectionType type,
+            @RequestParam(name = "type", required = false) InspectionType type,
             @AuthenticationPrincipal UserDetails user
     ) {
         return inspectionService.getInspections(type, user.getUsername());
@@ -67,7 +67,7 @@ public class InspectionController {
     // 점검 상세 조회
     @GetMapping("/{inspectionId}")
     public ApiResponse<InspectionDetailResponse> getInspectionDetailById(
-            @PathVariable Long inspectionId,
+            @PathVariable(name = "inspectionId") Long inspectionId,
             @AuthenticationPrincipal UserDetails user
     ) {
         return inspectionService.getInspectionDetail(inspectionId, user.getUsername());
@@ -98,7 +98,7 @@ public class InspectionController {
     // 점검 상태 변경 (변경: request.getStatus() → request.getInspectionStatus())
     @PatchMapping("/{inspectionId}/status")
     public ApiResponse<InspectionDetailResponse> updateInspectionStatus(
-            @PathVariable Long inspectionId,
+            @PathVariable(name = "inspectionId") Long inspectionId,
             @Valid @RequestBody InspectionStatusUpdateRequest request,
             @AuthenticationPrincipal UserDetails user
     ) {
@@ -117,7 +117,7 @@ public class InspectionController {
     // 지역별 점검 상태 통계 (변경: Map<String, Map<InspectionStatus, Long>> → Map<String, Map<String, Long>>)
     @GetMapping("/statistics/area")
     public ApiResponse<Map<String, Map<String, Long>>> getAreaStatistics(
-            @RequestParam String area
+            @RequestParam(name = "area") String area
     ) {
         return inspectionService.getAreaInspectionStatistics(area);
     }
