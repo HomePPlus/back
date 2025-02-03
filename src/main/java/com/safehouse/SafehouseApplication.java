@@ -12,4 +12,4 @@ public class SafehouseApplication {
 		SpringApplication.run(SafehouseApplication.class, args);
 	}
 
-}```
+}
