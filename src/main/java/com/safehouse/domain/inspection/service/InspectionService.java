@@ -176,7 +176,7 @@ public class InspectionService {
                 ));
 
         List<Inspection> inspections = inspectionRepository
-                .findByInspectorAndScheduleDate(inspector, LocalDate.now());
+                .findByInspectorAndScheduleDate(inspector, date);
 
         String messageKey = inspections.isEmpty()
                 ? "inspection.today.empty"
@@ -187,6 +187,7 @@ public class InspectionService {
                 convertToDtos(inspections)
         );
     }
+
 
     // === 내부 메서드 ===
     private Report validateReport(Long reportId, Inspector inspector) {
