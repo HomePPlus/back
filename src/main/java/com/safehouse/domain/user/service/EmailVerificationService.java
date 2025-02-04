@@ -87,6 +87,9 @@ public class EmailVerificationService {
 
     // 인증 코드 저장
     private void saveVerificationToken(String email, String code) {
+        // 기존 코드 삭제
+        verificationTokenRepository.deleteByEmail(email);
+
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setEmail(email);
         verificationToken.setCode(code);
