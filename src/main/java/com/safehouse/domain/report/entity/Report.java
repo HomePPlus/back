@@ -58,6 +58,7 @@ public class Report {
     private List<ReportImage> images = new ArrayList<>();
 
     public void update(ReportRequestDto request) {
+        this.reportTitle = request.getReportTitle();
         this.reportDetailAddress = request.getReportDetailAddress();
         this.defectType = request.getDefectType();
         this.reportDescription = request.getReportDescription();
