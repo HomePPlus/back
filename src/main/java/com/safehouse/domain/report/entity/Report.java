@@ -39,7 +39,7 @@ public class Report {
     private String area;
 
     // 모델 결과 저장
-    @OneToMany(mappedBy = "report")
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetectionResult> detectionResults;
 
     @ManyToOne(fetch = FetchType.LAZY)
