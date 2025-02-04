@@ -92,4 +92,17 @@ public class CustomException {
         }
     }
 
+    // 모델 실행 중 오류 발생 시 발생하는 예외
+    public static class ModelExecutionException extends RuntimeException {
+        public ModelExecutionException(String message) {
+            super(message);
+        }
+    }
+
+    // JSON 직렬화 실패 시 발생하는 예외
+    public static class SerializationException extends RuntimeException {
+        public SerializationException(String message) {
+            super(message);
+        }
+    }
 }

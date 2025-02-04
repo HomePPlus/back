@@ -87,4 +87,4 @@ file:
 # ================ 외부 서비스 연동 ================
 fastapi:
   server:
-    url: ${FASTAPI_SERVER_URL:http://localhost:8000}  # FastAPI 서버 URL (환경변수 우선)
+    url: ${FASTAPI_SERVER_URL:https://safehouse-fastapi-euhhchdphdhph0b0.koreacentral-01.azurewebsites.net}  # FastAPI 서버 URL (환경변수 우선)

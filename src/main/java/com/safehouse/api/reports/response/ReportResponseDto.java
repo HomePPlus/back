@@ -21,5 +21,6 @@ public class ReportResponseDto {
     private String reportDescription;
     private LocalDateTime reportDate;
     private List<ImageResponseDto> images;
+    private String detectionResult;
 }
 

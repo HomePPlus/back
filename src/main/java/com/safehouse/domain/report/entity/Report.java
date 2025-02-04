@@ -2,6 +2,7 @@ package com.safehouse.domain.report.entity;
 
 import com.safehouse.api.reports.request.ReportRequestDto;
 import com.safehouse.common.service.AddressUtil;
+import com.safehouse.domain.model.entity.DetectionResult;
 import com.safehouse.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,12 +38,21 @@ public class Report {
     @Column(nullable = false)
     private String area;
 
+    // 모델 결과 저장
+    @OneToMany(mappedBy = "report")
+    private List<DetectionResult> detectionResults;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Column(nullable = false)
     private String defectType;
+
+    // getter, setter 추가
+    @Setter
+    @Column
+    private String detectionLabel; // 감지된 label 문자열 저장
 
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReportImage> images = new ArrayList<>();
