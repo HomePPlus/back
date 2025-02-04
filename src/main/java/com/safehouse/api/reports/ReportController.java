@@ -42,9 +42,14 @@ public class ReportController {
         try {
             ObjectMapper mapper = new ObjectMapper();
             ReportRequestDto request = mapper.readValue(reportJson, ReportRequestDto.class);
+            // 제목이 비어 있을 경우 에러 처리
+            if (request.getReportTitle() == null || request.getReportTitle().trim().isEmpty()) {
+                throw new CustomException.BadRequestException(getMessage("제목을 입력해주세요."));
+            }
             // 이메일로 사용자 조회
             User user = userRepository.findByEmail(userDetails.getUsername())
                     .orElseThrow(() -> new CustomException.NotFoundException("사용자를 찾을 수 없습니다"));
+
             return reportService.createReport(user.getUserId(), request, images);
         } catch (JsonProcessingException e) {
             throw new CustomException.BadRequestException(getMessage("json.format.invalid"));

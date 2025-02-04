@@ -15,6 +15,7 @@ import java.util.List;
 public class ReportResponseDto {
     private Long id;
     private Long userId;  // reporter 대신 userId로 변경
+    private String reportTitle; // 제목 추가
     private String reportDetailAddress;
     private String defectType;
     private String reportDescription;

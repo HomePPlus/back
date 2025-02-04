@@ -24,6 +24,9 @@ public class Report {
     @Column(nullable = false)
     private LocalDateTime reportDate;
 
+    @Column(length = 100)
+    private String reportTitle; // 제목 추가
+
     @Column(nullable = false, length = 200)
     private String reportDescription;
 

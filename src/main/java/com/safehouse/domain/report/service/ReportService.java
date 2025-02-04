@@ -66,6 +66,7 @@ public ApiResponse<ReportResponseDto> createReport(Long userId, ReportRequestDto
         return ReportResponseDto.builder()
                 .id(report.getReportId())
                 .userId(report.getUser().getUserId())
+                .reportTitle(report.getReportTitle()) // 제목 반환
                 .reportDetailAddress(report.getReportDetailAddress())
                 .defectType(report.getDefectType())
                 .reportDescription(report.getReportDescription())
@@ -78,6 +79,7 @@ public ApiResponse<ReportResponseDto> createReport(Long userId, ReportRequestDto
         String area = AddressUtil.extractDistrict(request.getReportDetailAddress());
         return Report.builder()
                 .user(user)
+                .reportTitle(request.getReportTitle()) // 제목 설정
                 .reportDetailAddress(request.getReportDetailAddress())
                 .defectType(request.getDefectType())
                 .reportDescription(request.getReportDescription())
