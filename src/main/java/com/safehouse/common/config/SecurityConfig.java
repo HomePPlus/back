@@ -85,10 +85,10 @@ public class SecurityConfig {
         // 프로덕션과 개발 환경 모두 지원
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:3000",
-                "https://*.azurewebsites.net"
+                "https://safehouse-react-a5eyc2a9a0byd5hq.koreacentral-01.azurewebsites.net"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
 

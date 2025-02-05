@@ -143,46 +143,40 @@ public class JwtTokenProvider {
      * @param response HTTP 응답 객체
      */
     public void addTokenToCookie(String token, HttpServletResponse response) {
-        // 환경에 따라 도메인 설정 (프로덕션 vs 로컬)
-        String domain = isProduction() ? "koreacentral-01.azurewebsites.net" : "localhost";
+        // 환경에 따른 도메인 설정
+        String domain = isProduction() ?
+                "koreacentral-01.azurewebsites.net" :
+                "localhost";
 
-        // HTTP-Only 쿠키 생성
+        // JWT 토큰 쿠키 생성
         Cookie cookie = new Cookie("JWT_TOKEN", token);
-
-        // 쿠키 보안 설정
-        cookie.setHttpOnly(false);  // JavaScript로 쿠키 접근 방지
-        cookie.setSecure(true);    // HTTPS에서만 쿠키 전송
-        cookie.setPath("/");       // 전체 애플리케이션에서 쿠키 사용
-        cookie.setDomain(domain);  // 환경에 따라 도메인 설정
-
-        // 배포 환경 도메인 설정
-        cookie.setDomain("");
-
-        // 쿠키 만료 시간을 토큰 만료 시간과 동일하게 설정
+        cookie.setHttpOnly(false);
+        cookie.setSecure(isProduction());  // 프로덕션에서만 Secure 설정
+        cookie.setPath("/");
+        cookie.setDomain(domain);
         cookie.setMaxAge((int) (validityInMilliseconds / 1000));
 
-        // SameSite=None 설정 추가 (Spring Boot 기본 지원 없음 -> 헤더로 처리)
+        // 쿠키 헤더 설정
         response.addHeader("Set-Cookie", String.format(
-                "JWT_TOKEN=%s; Max-Age=%d; Path=/; Domain=%s; Secure; HttpOnly; SameSite=None",
-                token, (int) (validityInMilliseconds / 1000), domain
+                "JWT_TOKEN=%s; Max-Age=%d; Path=/; Domain=%s; %sHttpOnly; SameSite=%s",
+                token,
+                (int) (validityInMilliseconds / 1000),
+                domain,
+                isProduction() ? "Secure; " : "",
+                isProduction() ? "None" : "Lax"
         ));
 
-        // 응답에 쿠키 추가
         response.addCookie(cookie);
 
-        // 인증 상태 쿠키 추가 (프론트엔드용)
-        Cookie isAuthenticatedCookie = new Cookie("isAuthenticated", "true");
-        isAuthenticatedCookie.setHttpOnly(false);
-        isAuthenticatedCookie.setSecure(true);
-        isAuthenticatedCookie.setPath("/");
-        isAuthenticatedCookie.setDomain(domain);
-        isAuthenticatedCookie.setMaxAge((int) (validityInMilliseconds / 1000));
+        // 인증 상태 쿠키도 동일한 설정 적용
+        Cookie isAuthCookie = new Cookie("isAuthenticated", "true");
+        isAuthCookie.setHttpOnly(false);
+        isAuthCookie.setSecure(isProduction());
+        isAuthCookie.setPath("/");
+        isAuthCookie.setDomain(domain);
+        isAuthCookie.setMaxAge((int) (validityInMilliseconds / 1000));
 
-        response.addHeader("Set-Cookie", String.format(
-                "isAuthenticated=true; Max-Age=%d; Path=/; Domain=%s; Secure; SameSite=None",
-                (int) (validityInMilliseconds / 1000), domain
-        ));
-        response.addCookie(isAuthenticatedCookie);
+        response.addCookie(isAuthCookie);
     }
     /*
      * 로그아웃 시 쿠키를 만료시키는 메서드
