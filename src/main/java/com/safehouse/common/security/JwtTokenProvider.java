@@ -143,7 +143,9 @@ public class JwtTokenProvider {
      * @param response HTTP 응답 객체
      */
     public void addTokenToCookie(String token, HttpServletResponse response) {
-        // HttpOnly 쿠키에 토큰 저장 (보안용)
+        // 환경에 따라 도메인 설정 (프로덕션 vs 로컬)
+        String domain = isProduction() ? "https://safehouse-react-a5eyc2a9a0byd5hq.koreacentral-01.azurewebsites.net/" : "localhost";
+
         // HTTP-Only 쿠키 생성
         Cookie cookie = new Cookie("JWT_TOKEN", token);
 
@@ -151,22 +153,37 @@ public class JwtTokenProvider {
         cookie.setHttpOnly(false);  // JavaScript로 쿠키 접근 방지
         cookie.setSecure(true);    // HTTPS에서만 쿠키 전송
         cookie.setPath("/");       // 전체 애플리케이션에서 쿠키 사용
+        cookie.setDomain(domain);  // 환경에 따라 도메인 설정
+
+        // 배포 환경 도메인 설정
+        cookie.setDomain("");
 
         // 쿠키 만료 시간을 토큰 만료 시간과 동일하게 설정
         cookie.setMaxAge((int) (validityInMilliseconds / 1000));
 
+        // SameSite=None 설정 추가 (Spring Boot 기본 지원 없음 -> 헤더로 처리)
+        response.addHeader("Set-Cookie", String.format(
+                "JWT_TOKEN=%s; Max-Age=%d; Path=/; Domain=%s; Secure; HttpOnly; SameSite=None",
+                token, (int) (validityInMilliseconds / 1000), domain
+        ));
+
         // 응답에 쿠키 추가
         response.addCookie(cookie);
 
-         // 인증 상태 쿠키 추가 (프론트엔드용)
+        // 인증 상태 쿠키 추가 (프론트엔드용)
         Cookie isAuthenticatedCookie = new Cookie("isAuthenticated", "true");
         isAuthenticatedCookie.setHttpOnly(false);
         isAuthenticatedCookie.setSecure(true);
         isAuthenticatedCookie.setPath("/");
+        isAuthenticatedCookie.setDomain(domain);
         isAuthenticatedCookie.setMaxAge((int) (validityInMilliseconds / 1000));
+
+        response.addHeader("Set-Cookie", String.format(
+                "isAuthenticated=true; Max-Age=%d; Path=/; Domain=%s; Secure; SameSite=None",
+                (int) (validityInMilliseconds / 1000), domain
+        ));
         response.addCookie(isAuthenticatedCookie);
     }
-
     /*
      * 로그아웃 시 쿠키를 만료시키는 메서드
      * @param response HTTP 응답 객체
@@ -181,5 +198,14 @@ public class JwtTokenProvider {
 
     }
 
+    /*
+     * 프로덕션 환경 여부를 확인하는 메서드
+     * @return true if production, false otherwise
+     */
+    private boolean isProduction() {
+        // Spring 환경 변수를 사용하여 프로파일 확인
+        String activeProfile = System.getProperty("spring.profiles.active", "default");
+        return "prod".equalsIgnoreCase(activeProfile);
+    }
 
 }
