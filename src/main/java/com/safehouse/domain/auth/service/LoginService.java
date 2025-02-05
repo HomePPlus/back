@@ -34,7 +34,7 @@ public class LoginService {
             throw new CustomException.EmailNotVerifiedException(getMessage("email.not.verified"));
         }
 
-        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole(), user.getId());
         jwtTokenProvider.addTokenToCookie(token, response);
 
         return new ApiResponse<>(

@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,9 +34,10 @@ public class JwtTokenProvider {
     }
 
     // 토큰 생성
-    public String createToken(String email, String role) {
+    public String createToken(String email, String role, Long userId) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
+        claims.put("userId", userId);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
@@ -47,21 +49,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // 토큰 검증
-//    public boolean validateToken(String token) {
-//        try {
-//            if (isTokenBlacklisted(token)) {
-//                return false;
-//            }
-//            Jwts.parserBuilder()
-//                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-//                    .build()
-//                    .parseClaimsJws(token);
-//            return true;
-//        } catch (JwtException | IllegalArgumentException e) {
-//            return false;
-//        }
-//    }
     public boolean validateToken(String token) {
         try {
             if (isTokenBlacklisted(token)) {
@@ -101,14 +88,7 @@ public class JwtTokenProvider {
     public boolean isTokenBlacklisted(String token) {
         return tokenBlacklist.contains(token);
     }
-    // 요청에서 토큰 추출
-//    public String resolveToken(HttpServletRequest request) {
-//        String bearerToken = request.getHeader("Authorization");
-//        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-//            return bearerToken.substring(7);
-//        }
-//        return null;
-//    }
+
     public String resolveToken(HttpServletRequest request) {
         // 헤더에서 토큰 찾기
         String bearerToken = request.getHeader("Authorization");
@@ -132,11 +112,6 @@ public class JwtTokenProvider {
         return null;
     }
 
-    // 인증 정보 생성
-//    public Authentication getAuthentication(String token) {
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(getEmailFromToken(token));
-//        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-//    }
     public Authentication getAuthentication(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
