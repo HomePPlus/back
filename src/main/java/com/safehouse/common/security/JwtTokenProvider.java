@@ -144,7 +144,7 @@ public class JwtTokenProvider {
      */
     public void addTokenToCookie(String token, HttpServletResponse response) {
         // 환경에 따라 도메인 설정 (프로덕션 vs 로컬)
-        String domain = isProduction() ? "https://safehouse-react-a5eyc2a9a0byd5hq.koreacentral-01.azurewebsites.net/" : "localhost";
+        String domain = isProduction() ? "koreacentral-01.azurewebsites.net" : "localhost";
 
         // HTTP-Only 쿠키 생성
         Cookie cookie = new Cookie("JWT_TOKEN", token);

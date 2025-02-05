@@ -18,7 +18,7 @@ public class LogoutService {
 
     public ApiResponse<Void> logout(String token, HttpServletResponse response) {
         // 환경에 따라 도메인 설정 (프로덕션 vs 로컬)
-        String domain = isProduction() ? "https://safehouse-react-a5eyc2a9a0byd5hq.koreacentral-01.azurewebsites.net/" : "localhost";
+        String domain = isProduction() ? "koreacentral-01.azurewebsites.net" : "localhost";
 
         // JWT 토큰을 블랙리스트에 추가
         jwtTokenProvider.addToBlacklist(token);
