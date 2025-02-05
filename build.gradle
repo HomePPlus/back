@@ -55,6 +55,9 @@ dependencies {
 	// dotenv
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
+	// Azure Storage
+	implementation 'com.azure:azure-storage-blob:12.24.0'
+	implementation 'com.azure:azure-identity:1.11.1'
 
 }
 
