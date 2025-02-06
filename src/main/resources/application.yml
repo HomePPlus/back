@@ -95,3 +95,9 @@ fastapi:
 fastapi_checklist:
   server:
     url: ${FASTAPI_CHECKLIST_SERVER_URL:http://localhost:8000}
+
+# ================ Azure Blob Storage 설정 ================
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+    container-name: ${AZURE_STORAGE_CONTAINER_NAME}

@@ -58,6 +58,10 @@ dependencies {
 	// statsjson
 	implementation 'org.json:json:20220924'
 
+	// Azure Storage
+	implementation 'com.azure:azure-storage-blob:12.24.0'
+	implementation 'com.azure:azure-identity:1.11.1'
+
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
