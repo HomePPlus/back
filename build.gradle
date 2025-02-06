@@ -55,6 +55,9 @@ dependencies {
 	// dotenv
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
+	// statsjson
+	implementation 'org.json:json:20220924'
+
 
 }
 

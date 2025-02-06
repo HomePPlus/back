@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class DefectStatService {
+public class ReportDefectStatService {
 
     private final ReportDefectRepository reportDefectRepository;
     private static final List<String> VALID_AREAS = List.of(
