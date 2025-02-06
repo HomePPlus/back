@@ -34,53 +34,104 @@ public class DetectionStatService {
             throw new CustomException.NotFoundException("해당 지역의 통계 데이터가 없습니다");
         }
 
-        Map<String, Map<String, Long>> stats = new HashMap<>();
-        for (Object[] result : results) {
-            String areaName = (String) result[0];
-            String detectionJson = (String) result[1];
+        if (area.equals("부산시")) {
+            // 부산시 전체 통계 계산
+            Map<String, Map<String, Long>> totalStats = new HashMap<>();
+            totalStats.put("부산시", new HashMap<>());
 
-            if (!stats.containsKey(areaName)) {
-                stats.put(areaName, new HashMap<>());
-                for (DefectType type : DefectType.values()) {
-                    if (!type.getDisplayName().equals("모름")) { // "모름" 항목 제외
-                        stats.get(areaName).put(type.getDisplayName(), 0L);
-                    }
+            for (DefectType type : DefectType.values()) {
+                if (!type.getDisplayName().equals("모름")) { // "모름" 항목 제외
+                    totalStats.get("부산시").put(type.getDisplayName(), 0L);
                 }
-                stats.get(areaName).put("분석 결과 없음", 0L);
             }
+            totalStats.get("부산시").put("분석 결과 없음", 0L);
 
-            try {
-                JSONObject jsonObject = new JSONObject(detectionJson);
-                JSONArray detections = jsonObject.getJSONArray("detections");
+            for (Object[] result : results) {
+                String areaName = (String) result[0];
+                String detectionJson = (String) result[1];
 
-                if (detections.isEmpty()) {
-                    stats.get(areaName).put("분석 결과 없음", stats.get(areaName).get("분석 결과 없음") + 1);
-                } else {
-                    Set<String> detectedTypes = new HashSet<>(); // 탐지된 결함 유형을 저장할 집합
+                try {
+                    JSONObject jsonObject = new JSONObject(detectionJson);
+                    JSONArray detections = jsonObject.getJSONArray("detections");
 
-                    for (int i = 0; i < detections.length(); i++) {
-                        JSONObject detection = detections.getJSONObject(i);
-                        String label = detection.getString("label");
+                    if (detections.length() == 0) {
+                        totalStats.get("부산시").put("분석 결과 없음", totalStats.get("부산시").get("분석 결과 없음") + 1);
+                    } else {
+                        Set<String> detectedTypes = new HashSet<>(); // 탐지된 결함 유형을 저장할 집합
 
-                        // 결함 유형 매핑
-                        String mappedType = mapDefectType(label);
+                        for (int i = 0; i < detections.length(); i++) {
+                            JSONObject detection = detections.getJSONObject(i);
+                            String label = detection.getString("label");
 
-                        if (!detectedTypes.contains(mappedType)) { // 이미 카운트되지 않은 결함 유형만 추가
-                            detectedTypes.add(mappedType);
-                            if (stats.get(areaName).containsKey(mappedType)) {
-                                stats.get(areaName).put(mappedType, stats.get(areaName).get(mappedType) + 1);
+                            // 결함 유형 매핑
+                            String mappedType = mapDefectType(label);
+
+                            if (!detectedTypes.contains(mappedType)) { // 이미 카운트되지 않은 결함 유형만 추가
+                                detectedTypes.add(mappedType);
+                                if (totalStats.get("부산시").containsKey(mappedType)) {
+                                    totalStats.get("부산시").put(mappedType, totalStats.get("부산시").get(mappedType) + 1);
+                                }
                             }
                         }
                     }
+                } catch (Exception e) {
+                    // JSON 파싱 오류 발생 시 로깅
+                    System.out.println("JSON 파싱 오류: " + e.getMessage());
                 }
-            } catch (Exception e) {
-                // JSON 파싱 오류 발생 시 로깅
-                System.out.println("JSON 파싱 오류: " + e.getMessage());
             }
-        }
 
-        return ApiResponse.ok(stats);
+            return ApiResponse.ok(totalStats);
+        } else {
+            // 기존 로직
+            Map<String, Map<String, Long>> stats = new HashMap<>();
+            for (Object[] result : results) {
+                String areaName = (String) result[0];
+                String detectionJson = (String) result[1];
+
+                if (!stats.containsKey(areaName)) {
+                    stats.put(areaName, new HashMap<>());
+                    for (DefectType type : DefectType.values()) {
+                        if (!type.getDisplayName().equals("모름")) { // "모름" 항목 제외
+                            stats.get(areaName).put(type.getDisplayName(), 0L);
+                        }
+                    }
+                    stats.get(areaName).put("분석 결과 없음", 0L);
+                }
+
+                try {
+                    JSONObject jsonObject = new JSONObject(detectionJson);
+                    JSONArray detections = jsonObject.getJSONArray("detections");
+
+                    if (detections.length() == 0) {
+                        stats.get(areaName).put("분석 결과 없음", stats.get(areaName).get("분석 결과 없음") + 1);
+                    } else {
+                        Set<String> detectedTypes = new HashSet<>(); // 탐지된 결함 유형을 저장할 집합
+
+                        for (int i = 0; i < detections.length(); i++) {
+                            JSONObject detection = detections.getJSONObject(i);
+                            String label = detection.getString("label");
+
+                            // 결함 유형 매핑
+                            String mappedType = mapDefectType(label);
+
+                            if (!detectedTypes.contains(mappedType)) { // 이미 카운트되지 않은 결함 유형만 추가
+                                detectedTypes.add(mappedType);
+                                if (stats.get(areaName).containsKey(mappedType)) {
+                                    stats.get(areaName).put(mappedType, stats.get(areaName).get(mappedType) + 1);
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // JSON 파싱 오류 발생 시 로깅
+                    System.out.println("JSON 파싱 오류: " + e.getMessage());
+                }
+            }
+
+            return ApiResponse.ok(stats);
+        }
     }
+
 
     private String mapDefectType(String originalType) {
         return switch (originalType) {
