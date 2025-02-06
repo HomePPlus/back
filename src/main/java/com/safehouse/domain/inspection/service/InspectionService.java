@@ -222,6 +222,16 @@ public class InspectionService {
                 throw new CustomException.ConflictException(
                         getMessage("inspection.schedule.conflict.same.report"));
             }
+        } else if (type == InspectionType.REPORT) {
+            // 신고 점검의 경우, 동일한 날짜에 동일한 신고 ID로 예약된 점검 여부 확인
+            if (inspectionRepository.existsByInspectorAndScheduleDateAndReport_ReportId(
+                    inspector,
+                    scheduleDate,
+                    reportId
+            )) {
+                throw new CustomException.ConflictException(
+                        getMessage("inspection.schedule.conflict.same.report"));
+            }
         }
     }
 
