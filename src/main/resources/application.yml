@@ -22,6 +22,9 @@ spring:
         format_sql: true  # SQL 쿼리 포맷팅 (가독성 향상)
         dialect: org.hibernate.dialect.MySQL8Dialect  # MySQL 8.x 최적화 방언 설정
 
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
   # ================ SQL 초기화 설정 ================
   sql:
     init:
@@ -88,3 +91,7 @@ file:
 fastapi:
   server:
     url: ${FASTAPI_SERVER_URL:https://safehouse-fastapi-euhhchdphdhph0b0.koreacentral-01.azurewebsites.net}  # FastAPI 서버 URL (환경변수 우선)
+
+fastapi_checklist:
+  server:
+    url: ${FASTAPI_CHECKLIST_SERVER_URL:http://localhost:8000}

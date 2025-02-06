@@ -129,7 +129,9 @@ public class SecurityConfig {
                                 "/api/model/**",
                                 "/api/inspections/**",
                                 "/api/dashboard/**",
-                                "/api/user_reports/**"
+                                "/api/user_reports/**",
+                                "/submit_checklist/**",
+                                "/download/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/",
