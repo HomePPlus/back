@@ -10,6 +10,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(
+    origins = {
+        "http://localhost:3000",
+        "https://safehouse-react-a5eyc2a9a0byd5hq.koreacentral-01.azurewebsites.net"
+    },
+    allowedHeaders = "*",
+    methods = {
+        RequestMethod.GET,
+        RequestMethod.POST,
+        RequestMethod.PUT,
+        RequestMethod.DELETE,
+        RequestMethod.OPTIONS
+    },
+    allowCredentials = "true",
+    maxAge = 3600
+)
 public class LoginController {
 
     private final LoginService userService;

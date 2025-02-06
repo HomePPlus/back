@@ -167,16 +167,6 @@ public class JwtTokenProvider {
         ));
 
         response.addCookie(cookie);
-
-        // 인증 상태 쿠키도 동일한 설정 적용
-        Cookie isAuthCookie = new Cookie("isAuthenticated", "true");
-        isAuthCookie.setHttpOnly(false);
-        isAuthCookie.setSecure(isProduction());
-        isAuthCookie.setPath("/");
-        isAuthCookie.setDomain(domain);
-        isAuthCookie.setMaxAge((int) (validityInMilliseconds / 1000));
-
-        response.addCookie(isAuthCookie);
     }
     /*
      * 로그아웃 시 쿠키를 만료시키는 메서드

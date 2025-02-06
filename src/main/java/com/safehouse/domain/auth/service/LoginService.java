@@ -40,7 +40,12 @@ public class LoginService {
         return new ApiResponse<>(
                 200,
                 getMessage("login.success"),
-                new LoginResponseDto(getMessage("login.success"), user.getRole(), user.getId())
+                new LoginResponseDto(
+                    getMessage("login.success"), 
+                    user.getRole(), 
+                    user.getId(),
+                    token
+                )
         );
     }
 
