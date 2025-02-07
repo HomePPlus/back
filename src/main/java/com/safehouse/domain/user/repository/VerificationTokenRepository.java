@@ -1,4 +1,3 @@
-
 package com.safehouse.domain.user.repository;
 
 import com.safehouse.domain.user.entity.VerificationToken;
@@ -10,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface VerificationTokenRepository extends JpaRepository<VerificationToken, String> {
+public interface VerificationTokenRepository extends JpaRepository<VerificationToken, Long> {
     Optional<VerificationToken> findByEmailAndCode(String email, String code);
 
     boolean existsByEmailAndVerified(String email, boolean verified);
@@ -23,4 +22,3 @@ public interface VerificationTokenRepository extends JpaRepository<VerificationT
     @Transactional
     void deleteByEmail(String email);
 }
-

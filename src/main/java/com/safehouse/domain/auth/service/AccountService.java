@@ -67,7 +67,7 @@ public class AccountService {
         String code = generateVerificationCode();
         LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(15); // 15분 유효
 
-        VerificationToken token = verificationTokenRepository.findById(email)
+        VerificationToken token = verificationTokenRepository.findByEmail(email)
                 .orElse(new VerificationToken());
         token.setEmail(email);
         token.setCode(code);
@@ -127,4 +127,3 @@ public class AccountService {
 
 
 }
-

@@ -31,6 +31,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.safehouse.common.service.AddressUtil;
+import com.safehouse.domain.user.entity.Inspector;
+import com.safehouse.domain.user.repository.InspectorRepository;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -51,6 +53,7 @@ public class ReportService {
     private final BlobContainerClient blobContainerClient;
     private final UserRepository userRepository;
     private String containerName;
+    private final InspectorRepository inspectorRepository;
 
     @Transactional
     public ApiResponse<ReportResponseDto> createReport(Long userId, ReportRequestDto request, List<MultipartFile> images) {
@@ -260,6 +263,38 @@ public class ReportService {
             log.error("Azure Storage 이미지 삭제 실패: {}", imageUrl, e);
             throw new CustomException.BadRequestException("이미지 삭제에 실패했습니다.");
         }
+    }
+
+    // 예약되지 않은 신고 목록 조회 추가
+    public ApiResponse<List<ReportResponseDto>> getNonReservedReports() {
+        List<Report> reports = reportRepository.findNonReservedReports();
+        List<ReportResponseDto> responseDtos = reports.stream()
+                .map(ReportResponseDto::from)
+                .collect(Collectors.toList());
+
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                getMessage("reservation.list.success"),
+                responseDtos
+        );
+    }
+
+    // 점검자별 구역의 예약되지 않은 신고 목록 조회
+    public ApiResponse<List<ReportResponseDto>> getNonReservedReportsByInspector(String inspectorEmail) {
+        Inspector inspector = inspectorRepository.findByUser_Email(inspectorEmail)
+                .orElseThrow(() -> new CustomException.NotFoundException(
+                        getMessage("inspector.not.found")));
+
+        List<Report> reports = reportRepository.findNonReservedReportsByArea(inspector.getArea());
+        List<ReportResponseDto> responseDtos = reports.stream()
+                .map(ReportResponseDto::from)
+                .collect(Collectors.toList());
+
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                getMessage("report.fetch.nonreserved.area.success"),
+                responseDtos
+        );
     }
 
 
