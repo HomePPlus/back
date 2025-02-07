@@ -22,8 +22,8 @@ spring:
         format_sql: true  # SQL 쿼리 포맷팅 (가독성 향상)
         dialect: org.hibernate.dialect.MySQL8Dialect  # MySQL 8.x 최적화 방언 설정
 
-  jackson:
-    property-naming-strategy: SNAKE_CASE
+#  jackson:
+#    property-naming-strategy: SNAKE_CASE
 
   # ================ SQL 초기화 설정 ================
   sql:
