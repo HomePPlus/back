@@ -46,6 +46,12 @@ public class InspectionService {
                 ? validateReport(reportId, inspector)
                 : null;
 
+        if (type == InspectionType.REPORT) {
+            report = validateReport(reportId, inspector);
+            report.setReserved(true); // 예약 플래그 업데이트
+            reportRepository.save(report); // 변경 사항 저장
+        }
+
         validateScheduleDate(scheduleDate);
         validateSchedule(type, inspector, scheduleDate, reportId);
 

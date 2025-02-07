@@ -14,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "reports")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -49,6 +50,9 @@ public class Report {
     @Column(nullable = false)
     private String defectType;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean reserved; // 예약 여부 플래그 추가
+
     // getter, setter 추가
     @Setter
     @Column
@@ -64,4 +68,5 @@ public class Report {
         this.reportDescription = request.getReportDescription();
         this.area = AddressUtil.extractDistrict(request.getReportDetailAddress());
     }
+
 }

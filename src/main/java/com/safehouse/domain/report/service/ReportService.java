@@ -11,10 +11,12 @@ import com.safehouse.domain.model.repository.DetectionResultRepository;
 import com.safehouse.domain.model.service.DetectionService;
 import com.safehouse.domain.report.entity.Report;
 import com.safehouse.domain.report.entity.ReportImage;
+import com.safehouse.domain.user.entity.Inspector;
 import com.safehouse.domain.user.entity.User;
 import com.safehouse.api.reports.request.ReportRequestDto;
 import com.safehouse.api.reports.response.ReportResponseDto;
 import com.safehouse.domain.report.repository.ReportRepository;
+import com.safehouse.domain.user.repository.InspectorRepository;
 import com.safehouse.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +50,7 @@ public class ReportService {
     private final DetectionService detectionService;
     private final DetectionResultRepository detectionResultRepository;
     private final ObjectMapper objectMapper;
+    private final InspectorRepository inspectorRepository;
 
     @Value("${file.upload.path}")
     private String fileUploadPath;
@@ -150,6 +153,37 @@ public class ReportService {
         detectionResultRepository.save(detectionResultEntity);
     }
 
+    // 예약되지 않은 신고 목록 조회 추가
+    public ApiResponse<List<ReportResponseDto>> getNonReservedReports() {
+        List<Report> reports = reportRepository.findNonReservedReports();
+        List<ReportResponseDto> responseDtos = reports.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                getMessage("reservation.list.success"),
+                responseDtos
+        );
+    }
+
+    // 점검자별 구역의 예약되지 않은 신고 목록 조회
+    public ApiResponse<List<ReportResponseDto>> getNonReservedReportsByInspector(String inspectorEmail) {
+        Inspector inspector = inspectorRepository.findByUser_Email(inspectorEmail)
+                .orElseThrow(() -> new CustomException.NotFoundException(
+                        getMessage("inspector.not.found")));
+
+        List<Report> reports = reportRepository.findNonReservedReportsByArea(inspector.getArea());
+        List<ReportResponseDto> responseDtos = reports.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                getMessage("report.fetch.nonreserved.area.success"),
+                responseDtos
+        );
+    }
     private MultipartFile saveImage(MultipartFile file) throws IOException {
         // 파일 저장 디렉토리 확인 및 생성
         File directory = new File(fileUploadPath);

@@ -30,6 +30,7 @@ public class ReportController {
     private final MessageSource  messageSource;
     private final UserRepository userRepository;
     private final UserProfileService userProfileService;
+
     @PostMapping
     public ApiResponse<ReportResponseDto> createReport(
             @RequestPart(value = "report") String reportJson,
@@ -101,7 +102,21 @@ public class ReportController {
         return reportService.deleteReport(reportId, userId);
     }
 
+    // 예약 가능한 신고 목록 조회
+    @GetMapping("/reservable")
+    public ApiResponse<List<ReportResponseDto>> getReservableReports() {
+        return reportService.getNonReservedReports();
+    }
+
     private String getMessage(String code) {
         return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+    }
+
+    // 점검자별 예약 가능한 신고 목록 조회
+    @GetMapping("/reservable/inspector")
+    public ApiResponse<List<ReportResponseDto>> getReservableReportsByInspector(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return reportService.getNonReservedReportsByInspector(userDetails.getUsername());
     }
 }
