@@ -22,21 +22,15 @@ public class DetectionController {
         this.detectionService = detectionService;
     }
 
-    /**
-     * 이미지 파일을 업로드 받아 결함 탐지 결과를 반환합니다.
-     *
-     * @param file 업로드된 이미지 파일
-     * @return ResponseEntity<ApiResponse<DetectionResponse>> 형식의 응답
-     */
     @PostMapping(value = "/detect")
     public ResponseEntity<ApiResponse<DetectionResponse>> detectImage(
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") String azureUrl) {
         try {
-            ApiResponse<DetectionResponse> response = detectionService.getDetection(file);
+            ApiResponse<DetectionResponse> response = detectionService.detectDefect(azureUrl);
             return ResponseEntity.ok(response);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(500, "File processing failed: " + e.getMessage(), null));
+                    .body(new ApiResponse<>(500, "File processing error: " + e.getMessage(), null));
         }
     }
 }

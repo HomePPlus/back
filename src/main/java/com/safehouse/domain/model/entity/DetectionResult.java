@@ -2,16 +2,14 @@ package com.safehouse.domain.model.entity;
 
 import com.safehouse.domain.report.entity.Report;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "detection_results")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DetectionResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
