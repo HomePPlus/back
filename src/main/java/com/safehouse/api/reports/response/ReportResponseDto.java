@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,10 +14,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ReportResponseDto {
-    private Long id;
-    private Long userId;  // reporter 대신 userId로 변경
-    private String reportTitle; // 제목 추가
+    private Long reportId;
+    private Long userId;
+    private String reportTitle;
     private String reportDetailAddress;
     private String defectType;
     private String reportDescription;

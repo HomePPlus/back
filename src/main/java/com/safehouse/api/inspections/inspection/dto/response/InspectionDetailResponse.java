@@ -4,11 +4,14 @@ import com.safehouse.domain.inspection.entity.Inspection;
 import com.safehouse.domain.inspection.entity.InspectionStatus;
 import lombok.Builder;
 import lombok.Getter;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.time.LocalDate;
 
 @Getter
 @Builder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class InspectionDetailResponse {
     private Long inspectionId;
     private String type;
@@ -21,6 +24,7 @@ public class InspectionDetailResponse {
     // Report 정보 내부 클래스
     @Getter
     @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class ReportInfo {
         private Long reportId;
         private String description;

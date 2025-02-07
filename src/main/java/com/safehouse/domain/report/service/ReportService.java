@@ -83,7 +83,7 @@ public class ReportService {
         String labels = detectionResult != null ? detectionResult.getReport().getDetectionLabel() : null;
 
         return ReportResponseDto.builder()
-                .id(report.getReportId())
+                .reportId(report.getReportId())
                 .userId(report.getUser().getUserId())
                 .reportTitle(report.getReportTitle()) // 제목 반환
                 .reportDetailAddress(report.getReportDetailAddress())
