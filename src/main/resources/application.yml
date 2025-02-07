@@ -94,7 +94,7 @@ fastapi:
 
 fastapi_checklist:
   server:
-    url: ${FASTAPI_CHECKLIST_SERVER_URL:http://localhost:8000}
+    url: ${FASTAPI_CHECKLIST_SERVER_URL:https://safehouse-fastapi-check-azapajathmfjfta8.koreacentral-01.azurewebsites.net/}
 
 # ================ Azure Blob Storage 설정 ================
 azure:
