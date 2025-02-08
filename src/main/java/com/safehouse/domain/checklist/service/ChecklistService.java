@@ -56,5 +56,13 @@ public class ChecklistService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @Transactional
+    public ResponseEntity<Resource> submitAndDownloadChecklist(ChecklistRequestDto requestDto) {
+        // 1. 체크리스트 데이터 저장
+        ChecklistResponseDto savedChecklist = submitChecklist(requestDto);
+        
+        // 2. PDF 다운로드 (기존 downloadReport 메서드 활용)
+        return downloadReport(savedChecklist.getInspectionId());
+    }
 }
 

@@ -82,8 +82,8 @@ public class DetectionService {
 
             // null 체크 및 예외 처리 강화
             if (response == null || response.getDetections() == null || response.getDetections().isEmpty()) {
-                log.error("결함 탐지 결과가 비어있습니다.");
-                throw new CustomException.ModelExecutionException("결함 탐지 결과가 없습니다.");
+                log.info("결함 탐지 결과가 없습니다.");
+                return new ApiResponse<>(HttpStatus.OK.value(), "결함이 탐지되지 않았습니다.", null);
             }
 
             // 응답을 JSON으로 변환하여 저장

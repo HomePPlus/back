@@ -25,4 +25,10 @@ public class ChecklistController {
     public ResponseEntity<Resource> downloadReport(@PathVariable("report_id") String reportId) {
         return checklistService.downloadReport(reportId);
     }
+
+    @PostMapping("/submitAndDownload_checklist")
+    public ResponseEntity<Resource> submitAndDownloadChecklist(
+            @Valid @RequestBody ChecklistRequestDto requestDto) {
+        return checklistService.submitAndDownloadChecklist(requestDto);
+    }
 }
