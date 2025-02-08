@@ -78,44 +78,31 @@ public class ReportService {
 
             // 3. 이미지 처리 및 모델 실행
             if (images != null && !images.isEmpty()) {
-                log.info("이미지 처리 시작 - 이미지 개수: {}", images.size());
-
+                StringBuilder allDetectionLabels = new StringBuilder();
+                
                 for (MultipartFile file : images) {
-                    try {
-                        // Azure에 이미지 저장
-                        String storedFileName = uploadImageToAzure(UUID.randomUUID().toString(), file);
-                        addImageToReport(report, file.getOriginalFilename(), storedFileName, file);
+                    String storedFileName = UUID.randomUUID().toString();
+                    String imageUrl = uploadImageToAzure(storedFileName, file);
+                    addImageToReport(report, file.getOriginalFilename(), imageUrl, file);
 
-                        // 모델 실행
-                        ApiResponse<DetectionResponse> detectionResult = detectionService.detectDefect(storedFileName);
-
-                        // 결함 유형 저장
-                        if (detectionResult != null && detectionResult.getData() != null &&
-                                detectionResult.getData().getDetections() != null &&
-                                !detectionResult.getData().getDetections().isEmpty()) {
-                            String label = detectionResult.getData().getDetections().get(0).getLabel();
-                            report.setDetectionLabel(label);
-                            log.info("결함 탐지 라벨 저장: {}", label);
+                    // AI 모델 실행 및 결함 라벨 저장
+                    ApiResponse<DetectionResponse> detectionResult = detectionService.detectDefect(imageUrl);
+                    if (detectionResult != null && detectionResult.getData() != null) {
+                        List<String> labels = detectionResult.getData().getDetections().stream()
+                            .map(detection -> detection.getLabel())
+                            .collect(Collectors.toList());
+                        
+                        String labelString = String.join(", ", labels);
+                        if (allDetectionLabels.length() > 0) {
+                            allDetectionLabels.append("; ");
                         }
-
-                        // DetectionResult 엔티티 생성 및 저장
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        String detectionJson = objectMapper.writeValueAsString(detectionResult.getData());
-
-                        DetectionResult detection = DetectionResult.builder()
-                                .report(report)
-                                .detectionJson(detectionJson)
-                                .build();
-
-                        // 양방향 연관관계 설정
-                        detection.setReport(report);
-                        report.getDetectionResults().add(detection);
-
-                        log.info("탐지 결과 저장 완료: {}", detectionJson);
-                    } catch (Exception e) {
-                        log.error("이미지 처리 중 오류 발생", e);
-                        throw new CustomException.BadRequestException("이미지 처리 중 오류가 발생했습니다: " + e.getMessage());
+                        allDetectionLabels.append(labelString);
+                        log.info("탐지된 결함: {}", labelString);
                     }
+                }
+                
+                if (allDetectionLabels.length() > 0) {
+                    report.setDetectionLabel(allDetectionLabels.toString());
                 }
             }
 
@@ -310,6 +297,33 @@ public class ReportService {
 
     private String getMessage(String code) {
         return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+    }
+
+    private void processImages(Report report, List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) return;
+
+        for (MultipartFile file : files) {
+            try {
+                String storedFileName = UUID.randomUUID().toString();
+                String imageUrl = uploadImageToAzure(storedFileName, file);
+
+                // AI 모델 실행 및 결함 라벨 저장
+                ApiResponse<DetectionResponse> detectionResult = detectionService.detectDefect(imageUrl);
+                if (detectionResult != null && detectionResult.getData() != null) {
+                    List<String> labels = detectionResult.getData().getDetections().stream()
+                        .map(detection -> detection.getLabel())
+                        .collect(Collectors.toList());
+                    
+                    String allLabels = String.join(", ", labels); // PaintDamage, Exposure, Spalling
+                    report.setDetectionLabel(allLabels);
+                    log.info("탐지된 결함: {}", allLabels);
+                }
+
+            } catch (Exception e) {
+                log.error("이미지 처리 중 오류", e);
+                throw new CustomException.BadRequestException("이미지 처리 중 오류가 발생했습니다.");
+            }
+        }
     }
 
 }

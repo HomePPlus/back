@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;  // 이 import 추가
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,19 +33,8 @@ public class ReportResponseDto {
     private String detectionResult;
 
     public static ReportResponseDto from(Report report) {
-        String detectionLabel = null;
-        if (!report.getDetectionResults().isEmpty()) {
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode rootNode = objectMapper.readTree(report.getDetectionResults().get(0).getDetectionJson());
-                JsonNode detectionsNode = rootNode.get("detections");
-                if (detectionsNode != null && detectionsNode.isArray() && detectionsNode.size() > 0) {
-                    detectionLabel = detectionsNode.get(0).get("label").asText();
-                }
-            } catch (Exception e) {
-                // JSON 파싱 실패 시 null 유지
-            }
-        }
+        // 로그 추가
+        System.out.println("Detection Results size: " + report.getDetectionResults().size());
 
         return ReportResponseDto.builder()
                 .reportId(report.getReportId())
@@ -57,7 +47,7 @@ public class ReportResponseDto {
                 .images(report.getImages().stream()
                         .map(ReportImage::getReportImageUrl)
                         .collect(Collectors.toList()))
-                .detectionResult(detectionLabel)
+                .detectionResult(report.getDetectionLabel())
                 .build();
     }
 }
