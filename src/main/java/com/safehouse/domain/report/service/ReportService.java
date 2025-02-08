@@ -144,13 +144,13 @@ public class ReportService {
         List<ReportResponseDto> responseList = reports.stream()
                 .map(ReportResponseDto::from)
                 .toList();
-        return new ApiResponse<>(200, getMessage("report.get.all.success"), responseList);
+        return new ApiResponse<>(200, getMessage("report.fetch.success"), responseList);
     }
 
     public ApiResponse<ReportResponseDto> getReportDetail(Long reportId) {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new CustomException.NotFoundException(getMessage("report.not.found")));
-        return new ApiResponse<>(200, getMessage("report.get.detail.success"),
+        return new ApiResponse<>(200, getMessage("report.detail.success"),
                 ReportResponseDto.from(report));
     }
 
