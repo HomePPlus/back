@@ -39,6 +39,10 @@ public class Report {
     @Column(nullable = false)
     private String area;
 
+    // 모델 결과의 총 점수
+    @Column
+    private Double totalScore;
+
     // 모델 결과 저장
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetectionResult> detectionResults;
