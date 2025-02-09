@@ -276,7 +276,8 @@ public class InspectionService {
                         .defectType(inspection.getReport().getDefectType())
                         .build()
                         : null)
-                .build();
+                .detectionLabel(inspection.getReport() != null ? inspection.getReport().getDetectionLabel() : null) // 추가
+            .build();
     }
 
 

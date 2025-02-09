@@ -2,12 +2,14 @@ package com.safehouse.api.inspections.inspection.dto.response;
 
 import com.safehouse.domain.inspection.entity.Inspection;
 import com.safehouse.domain.inspection.entity.InspectionStatus;
+import com.safehouse.domain.model.entity.DetectionResult;
 import lombok.Builder;
 import lombok.Getter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
@@ -20,6 +22,7 @@ public class InspectionDetailResponse {
     private LocalDate endDate;
     private String inspectorName;
     private ReportInfo reportInfo;
+    private String detectionLabel; // 추가
 
     // Report 정보 내부 클래스
     @Getter
