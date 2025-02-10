@@ -103,15 +103,65 @@ public class DetectionService {
         }
     }
 
+    public ApiResponse<DetectionResponse> detectDefectJson(String storedFileName) {
+        try {
+            String blobPath = "test_images/" + storedFileName;
+            log.info("결함 탐지 시작 - Blob 경로: {}", blobPath);
 
+            // Azure Blob에서 이미지 다운로드
+            BlobClient blobClient = blobContainerClient.getBlobClient(blobPath);
+            byte[] imageBytes = blobClient.downloadContent().toBytes();
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
+            ByteArrayResource fileResource = new ByteArrayResource(imageBytes) {
+                @Override
+                public String getFilename() {
+                    return storedFileName;
+                }
+            };
 
-    /**
-     * 파일 유효성을 검사합니다.
-     *
-     * @param file 검사할 파일
-     */
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("file", fileResource);  // "file1" -> "file"로 변경
+
+            log.info("FastAPI 요청 URL: {}", fastApiUrl);
+            log.info("요청 헤더: {}", headers);
+            log.info("요청 바디 파일명: {}", fileResource.getFilename());
+
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+            ResponseEntity<DetectionResponse> responseEntity = restTemplate.exchange(
+                    fastApiUrl,
+                    HttpMethod.POST,
+                    requestEntity,
+                    DetectionResponse.class
+            );
+
+            DetectionResponse response = responseEntity.getBody();
+            log.info("FastAPI 응답 데이터: {}", response);
+
+            if (response == null || response.getDetections() == null || response.getDetections().isEmpty()) {
+                log.info("결함 탐지 결과가 없습니다.");
+                return new ApiResponse<>(HttpStatus.OK.value(), "결함이 탐지되지 않았습니다.", null);
+            }
+
+            // 응답을 JSON으로 변환하여 저장
+            ObjectMapper objectMapper = new ObjectMapper();
+            String responseJson = objectMapper.writeValueAsString(response);
+            log.info("결함 탐지 결과 JSON: {}", responseJson);
+
+            return new ApiResponse<>(HttpStatus.OK.value(), "결함 탐지 완료", response);
+
+        } catch (BlobStorageException e) {
+            log.error("Azure Blob Storage 접근 중 오류 발생 - 경로: test_images/{}", storedFileName, e);
+            throw new CustomException.NotFoundException("Azure Storage에서 이미지를 가져오는데 실패했습니다.");
+        } catch (Exception e) {
+            log.error("결함 탐지 중 오류 발생", e);
+            throw new CustomException.ModelExecutionException("결함 탐지 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
     private void validateFile(MultipartFile file) {
         // 1. 파일이 비어있는지 확인
         if (file.isEmpty()) {

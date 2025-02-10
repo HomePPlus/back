@@ -79,7 +79,8 @@ public class ReportService {
             // 3. 이미지 처리 및 모델 실행
             if (images != null && !images.isEmpty()) {
                 StringBuilder allDetectionLabels = new StringBuilder();
-                
+                double totalScore = 0.0;
+
                 for (MultipartFile file : images) {
                     String storedFileName = UUID.randomUUID().toString();
                     String imageUrl = uploadImageToAzure(storedFileName, file);
@@ -98,12 +99,15 @@ public class ReportService {
                         }
                         allDetectionLabels.append(labelString);
                         log.info("탐지된 결함: {}", labelString);
+
+                        totalScore = detectionResult.getData().getTotalScore();
                     }
                 }
                 
                 if (allDetectionLabels.length() > 0) {
                     report.setDetectionLabel(allDetectionLabels.toString());
                 }
+                report.setTotalScore(totalScore);
             }
 
             // 4. Report 저장

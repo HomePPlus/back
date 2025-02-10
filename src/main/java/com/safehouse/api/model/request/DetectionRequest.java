@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class DetectionRequest {
     private MultipartFile file;
-
     public DetectionRequest(MultipartFile file) {
         this.file = file;
     }
@@ -20,4 +19,5 @@ public class DetectionRequest {
     public void setFile(MultipartFile file) {
         this.file = file;
     }
+
 }

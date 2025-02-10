@@ -31,6 +31,7 @@ public class ReportResponseDto {
     private LocalDateTime reportDate;
     private List<String> images;
     private String detectionResult;
+    private Double totalScore;  // 추가된 필드
 
     public static ReportResponseDto from(Report report) {
         // 로그 추가
@@ -48,6 +49,7 @@ public class ReportResponseDto {
                         .map(ReportImage::getReportImageUrl)
                         .collect(Collectors.toList()))
                 .detectionResult(report.getDetectionLabel())
+                .totalScore(report.getTotalScore())
                 .build();
     }
 }
