@@ -144,32 +144,51 @@ public class InspectionService {
     // 지역별 점검 상태 통계
     public ApiResponse<Map<String, Map<String, Long>>> getAreaInspectionStatistics(String area) {
         List<Object[]> results = inspectionRepository.getRawInspectionData();
-        Map<String, Map<String, Long>> statistics = new HashMap<>();
 
-        // 부산시 전체 요청 시 모든 구 합산
+        // 결과를 가공하여 Map<String, Map<String, Long>> 형태로 변환
+        Map<String, Map<String, Long>> statistics = new HashMap<>();
         Map<String, Long> totalStats = new HashMap<>();
 
-        for (Object[] result : results) {
-            String fullAddress = (String) result[0];
-            String district = AddressUtil.extractDistrict(fullAddress);
-            InspectionStatus status = (InspectionStatus) result[1];
-            Long count = (Long) result[2];
-            // 전체 지역 요청
+        for (Object[] row : results) {
+            String region = normalizeRegion((String) row[0]); // 지역 정보 정규화
+            String status = ((InspectionStatus) row[1]).getDescription(); // 상태 정보
+            Long count = (Long) row[2]; // 개수
+
+            // 지역별 통계 추가
+            statistics.putIfAbsent(region, new HashMap<>());
+            statistics.get(region).merge(status, count, Long::sum);
+
+            // 부산시 전체 합계 계산
             if ("부산시".equals(area)) {
-                totalStats.merge(status.getDescription(), count, Long::sum);
-                continue;
-            }
-            // 특정 구 요청
-            if (district.equals(area)) {
-                statistics.computeIfAbsent(district, k -> new HashMap<>())
-                        .merge(status.getDescription(), count, Long::sum);
+                totalStats.merge(status, count, Long::sum);
             }
         }
-        // 부산시 전체 결과 반환
+
+        // 부산시 전체 요청 처리
         if ("부산시".equals(area)) {
             return ApiResponse.ok(Map.of("부산시", totalStats));
         }
+
+        // 특정 지역 요청 처리
+        if (area != null && !area.isEmpty()) {
+            Map<String, Map<String, Long>> filteredStatistics = new HashMap<>();
+            for (Map.Entry<String, Map<String, Long>> entry : statistics.entrySet()) {
+                if (entry.getKey().contains(area)) { // 특정 구를 포함하는 경우만 필터링
+                    filteredStatistics.put(entry.getKey(), entry.getValue());
+                }
+            }
+            return ApiResponse.ok(filteredStatistics);
+        }
+
         return ApiResponse.ok(statistics);
+    }
+
+    // 지역 이름 정규화 메서드 추가
+    private String normalizeRegion(String region) {
+        if (region.startsWith("부산 ")) {
+            return region.substring(3); // "부산 영도구" → "영도구"
+        }
+        return region;
     }
 
     // 오늘 예약 조회

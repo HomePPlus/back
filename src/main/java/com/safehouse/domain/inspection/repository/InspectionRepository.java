@@ -20,10 +20,15 @@ public interface InspectionRepository extends JpaRepository<Inspection, Long> {
     List<Inspection> findByTypeAndInspector(InspectionType type, Inspector inspector);
 
     // 특정 지역의 점검 상태별 개수 조회 (대시보드 통계에 사용: 부산시 전체 or 특정 구)
-    @Query("SELECT i.report.reportDetailAddress, i.status, COUNT(i) " +
+    @Query("SELECT " +
+            "CASE WHEN i.type = 'REGULAR' THEN i.inspector.area ELSE FUNCTION('SUBSTRING_INDEX', i.report.reportDetailAddress, ' ', 2) END AS district, " +
+            "i.status AS status, COUNT(i) AS count " +
             "FROM Inspection i " +
-            "GROUP BY i.report.reportDetailAddress, i.status")
+            "LEFT JOIN i.report r " +
+            "GROUP BY district, i.status")
     List<Object[]> getRawInspectionData();
+
+
 
     // 점검자의 점검 상태별 개수 조회 (대시보드 통계에 사용)
     @Query("SELECT i.status, COUNT(i) FROM Inspection i WHERE i.inspector = :inspector GROUP BY i.status")
