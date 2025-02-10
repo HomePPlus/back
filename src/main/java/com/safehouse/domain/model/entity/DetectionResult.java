@@ -23,5 +23,4 @@ public class DetectionResult {
     @Setter
     @Column(columnDefinition = "LONGTEXT") // JSON 데이터를 저장할 수 있도록 LONGTEXT 설정
     private String detectionJson;
-
 }

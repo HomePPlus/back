@@ -89,8 +89,19 @@ public class ReportService {
                     // AI 모델 실행 및 결함 라벨 저장
                     ApiResponse<DetectionResponse> detectionResult = detectionService.detectDefect(imageUrl);
                     if (detectionResult != null && detectionResult.getData() != null) {
+                         // DetectionResult 엔티티 생성 및 저장
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        String detectionJson = objectMapper.writeValueAsString(detectionResult.getData());
+                        
+                        DetectionResult detection = DetectionResult.builder()
+                            .detectionJson(detectionJson)
+                            .report(report)  // 연관관계 설정
+                            .build();
+                        
+                        report.getDetectionResults().add(detection);  // 양방향 연관관계 설정
+                        
                         List<String> labels = detectionResult.getData().getDetections().stream()
-                            .map(detection -> detection.getLabel())
+                            .map(d -> d.getLabel())
                             .collect(Collectors.toList());
                         
                         String labelString = String.join(", ", labels);
