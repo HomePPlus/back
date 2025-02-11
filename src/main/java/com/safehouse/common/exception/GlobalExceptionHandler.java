@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage())
         );
-        return new ApiResponse<>(400, "Validation error", errors);
+        return new ApiResponse<>(400, "입력값 오류", errors);
     }
 
     // 커스텀 예외 통합 처리
@@ -28,7 +28,8 @@ public class GlobalExceptionHandler {
             CustomException.NotFoundException.class,     // 리소스 없음 (404)
             CustomException.ForbiddenException.class,    // 권한 없음 (403)
             CustomException.UnauthorizedException.class,// 인증 실패 (401)
-            CustomException.ConflictException.class      // 리소스 충돌 (409)
+            CustomException.ConflictException.class,     // 리소스 충돌 (409)
+            CustomException.PasswordException.class      // 비밀번호 불일치 (401)
     })
     public ApiResponse<?> handleCustomExceptions(RuntimeException ex) {
         int statusCode = determineStatusCode(ex);
@@ -42,6 +43,7 @@ public class GlobalExceptionHandler {
         if (ex instanceof CustomException.ForbiddenException) return 403;
         if (ex instanceof CustomException.UnauthorizedException) return 401;
         if (ex instanceof CustomException.ConflictException) return 409;
+        if (ex instanceof CustomException.PasswordException) return 401;
         return 400; // 기본값 (처리되지 않은 예외)
     }
 }

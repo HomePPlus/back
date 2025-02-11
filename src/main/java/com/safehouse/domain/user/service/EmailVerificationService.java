@@ -53,30 +53,43 @@ public class EmailVerificationService {
 
     // 인증 코드 확인
     public ApiResponse<EmailVerificationResponseDto> verifyEmail(String email, String code) {
-        VerificationToken verificationToken = verificationTokenRepository.findByEmailAndCode(email, code)
-                .orElseThrow(() -> new CustomException.VerificationException(
-                        getMessage("email.verification.invalid")));
+        try {
+            // 입력값 검증
+            if (email == null || email.trim().isEmpty()) {
+                return ApiResponse.error(400, getMessage("email.required"));
+            }
+            if (code == null || code.trim().isEmpty()) {
+                return ApiResponse.error(400, getMessage("verification.code.required"));
+            }
 
-        if (isCodeExpired(verificationToken.getExpiryDate())) {
-            throw new CustomException.VerificationException(
-                    getMessage("email.verification.expired"));
+            // 인증 코드 검증
+            VerificationToken verificationToken = verificationTokenRepository
+                    .findByEmailAndCode(email, code)
+                    .orElse(null);
+                    
+            if (verificationToken == null) {
+                return ApiResponse.error(400, getMessage("email.verification.invalid"));
+            }
+
+            if (isCodeExpired(verificationToken.getExpiryDate())) {
+                return ApiResponse.error(400, getMessage("email.verification.expired"));
+            }
+
+            // 인증 성공 처리
+            verificationToken.setVerified(true);
+            verificationTokenRepository.save(verificationToken);
+
+            EmailVerificationResponseDto responseDto = new EmailVerificationResponseDto(
+                    true,
+                    getMessage("email.verification.success"),
+                    "VERIFIED"
+            );
+
+            return ApiResponse.ok(getMessage("email.verification.success"), responseDto);
+
+        } catch (Exception e) {
+            return ApiResponse.error(500, getMessage("verification.failed"));
         }
-
-        // 인증 성공 처리
-        verificationToken.setVerified(true);
-        verificationTokenRepository.save(verificationToken);
-
-        EmailVerificationResponseDto responseDto = new EmailVerificationResponseDto(
-                true,
-                getMessage("email.verification.success"),
-                "VERIFIED"
-        );
-
-        return new ApiResponse<>(
-                200,
-                getMessage("email.verification.success"),
-                responseDto
-        );
     }
 
     // 6자리 랜덤 인증 코드 생성
