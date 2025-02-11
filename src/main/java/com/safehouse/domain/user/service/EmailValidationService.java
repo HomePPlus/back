@@ -1,6 +1,5 @@
 package com.safehouse.domain.user.service;
 import com.safehouse.api.users.dto.response.EmailValidationResponseDto;
-import com.safehouse.common.exception.CustomException;
 import com.safehouse.common.response.ApiResponse;
 import com.safehouse.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +17,21 @@ public class EmailValidationService {
     public ApiResponse<EmailValidationResponseDto> checkEmail(String email) {
         // 이메일 null 또는 빈 문자열 체크
         if (email == null || email.trim().isEmpty()) {
-            throw new CustomException.InvalidInputException(getMessage("email.required"));
+            return ApiResponse.error(400, getMessage("email.required"));
         }
 
+        // 이메일 중복 체크
         if (userRepository.existsByEmail(email)) {
-            throw new CustomException.ConflictException(getMessage("email.duplicate"));
+            return ApiResponse.error(409, getMessage("email.duplicate"));
         }
 
+        // 사용 가능한 이메일인 경우
         EmailValidationResponseDto responseDto = new EmailValidationResponseDto(
                 true,
                 getMessage("email.available")
         );
 
-        return new ApiResponse<>(
-                200,
-                getMessage("email.available"),
-                responseDto
-        );
+        return ApiResponse.ok(getMessage("email.available"), responseDto);
     }
 
     private String getMessage(String code) {
