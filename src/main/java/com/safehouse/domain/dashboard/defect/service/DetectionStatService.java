@@ -139,7 +139,7 @@ public class DetectionStatService {
             case "Spalling" -> DefectType.PEELING.getDisplayName();
             case "PaintDamage" -> DefectType.PAINT_DAMAGE.getDisplayName();
             case "CoatingDamage" -> DefectType.PAINT_DAMAGE.getDisplayName();
-            case "SteelDefect_Level1", "SteelDefect_Level2", "SteelDefect_Level3" -> DefectType.STEEL_DAMAGE.getDisplayName();
+            case "SteelDefect_Level_1", "SteelDefect_Level_2", "SteelDefect_Level_3" -> DefectType.STEEL_DAMAGE.getDisplayName();
             case "crack_1", "crack_2", "crack_3" -> DefectType.CRACK.getDisplayName();
             case "Efflorescence_Level1", "Efflorescence_Level2", "Efflorescence_Level3" -> DefectType.LEAK_WHITENING.getDisplayName();
             default -> DefectType.UNKNOWN.getDisplayName();
