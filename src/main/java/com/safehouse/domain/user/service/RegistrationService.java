@@ -28,31 +28,28 @@ public class RegistrationService {
     private final VerificationTokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final MessageSource messageSource;
+
     @Transactional
     public ApiResponse<RegistrationResponseDto> registerResident(ResidentSignUpDto dto) {
-        // 입력값 검증
-        ApiResponse<?> validationResult = validateInput(dto);
-        if (validationResult.getStatus() != 200) {
-            return ApiResponse.error(validationResult.getStatus(), validationResult.getMessage());
-        }
+        validateRegistration(dto.getEmail(), dto.getPassword());
 
-        User user = createUser(dto, "RESIDENT");
+         User user = createUser(dto, "RESIDENT");
         RegistrationResponseDto responseDto = new RegistrationResponseDto(
                 true,
                 getMessage("registration.success"),
                 "RESIDENT"
         );
 
-        return new ApiResponse<>(200, getMessage("registration.success"), responseDto);
+        return new ApiResponse<>(
+                200,
+                getMessage("registration.success"),
+                responseDto
+        );
     }
 
     @Transactional
     public ApiResponse<RegistrationResponseDto> registerInspector(InspectorSignUpDto dto) {
-        // 입력값 검증
-        ApiResponse<?> validationResult = validateInput(dto);
-        if (validationResult.getStatus() != 200) {
-            return ApiResponse.error(validationResult.getStatus(), validationResult.getMessage());
-        }
+        validateRegistration(dto.getEmail(), dto.getPassword());
 
         User user = createUser(dto, "INSPECTOR");
 
@@ -107,46 +104,5 @@ public class RegistrationService {
 
     private String getMessage(String code) {
         return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
-    }
-
-    // 입력값 검증 메소드 추가
-    private ApiResponse<?> validateInput(SignUpDto dto) {
-        // 비밀번호 검증
-        if (dto == null || dto.getPassword() == null || dto.getPassword().trim().isEmpty()) {
-            return ApiResponse.error(400, "비밀번호를 입력해주세요.");  // 하드코딩된 메시지 사용
-        }
-
-        // 이메일 검증
-        if (dto.getEmail() == null || dto.getEmail().trim().isEmpty()) {
-            return ApiResponse.error(400, "이메일을 입력해주세요.");
-        }
-
-        // 이름 검증
-        if (dto.getUserName() == null || dto.getUserName().trim().isEmpty()) {
-            return ApiResponse.error(400, "이름을 입력해주세요.");
-        }
-
-        // 전화번호 검증
-        if (dto.getPhone() == null || dto.getPhone().trim().isEmpty()) {
-            return ApiResponse.error(400, "전화번호를 입력해주세요.");
-        }
-
-        // 주소 검증
-        if (dto.getDetailAddress() == null || dto.getDetailAddress().trim().isEmpty()) {
-            return ApiResponse.error(400, "주소를 입력해주세요.");
-        }
-        
-        // Inspector 전용 검증
-        if (dto instanceof InspectorSignUpDto) {
-            InspectorSignUpDto inspectorDto = (InspectorSignUpDto) dto;
-            if (inspectorDto.getInspector_company() == null || inspectorDto.getInspector_company().trim().isEmpty()) {
-                return ApiResponse.error(400, "회사명을 입력해주세요.");
-            }
-            if (inspectorDto.getInspector_number() == null || inspectorDto.getInspector_number().trim().isEmpty()) {
-                return ApiResponse.error(400, "점검자 번호를 입력해주세요.");
-            }
-        }
-        
-        return ApiResponse.ok("Validation successful", null);
     }
 }

@@ -44,7 +44,8 @@ public class LoginService {
                     getMessage("login.success"), 
                     user.getRole(), 
                     user.getId(),
-                    token
+                    token,
+                    user.getUserRealName()
                 )
         );
     }

@@ -38,6 +38,18 @@ public class AzureBlobService {
         }
     }
 
+    public String uploadImageToTestFolder(MultipartFile file) {
+        try {
+            String fileName = "test_images/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            BlobClient blobClient = blobContainerClient.getBlobClient(fileName);
+            blobClient.upload(file.getInputStream(), file.getSize(), true);
+            return blobClient.getBlobUrl();
+        } catch (IOException e) {
+            log.error("Failed to upload file to Azure Blob Storage test_images folder", e);
+            throw new CustomException.FileUploadException("파일 업로드에 실패했습니다.");
+        }
+    }
+
     public void deleteImage(String fileName) {
         try {
             BlobClient blobClient = blobContainerClient.getBlobClient(fileName);
