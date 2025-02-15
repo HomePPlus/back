@@ -34,7 +34,11 @@ spring:
   # ================ MVC 설정 ================
   mvc:
     charset: UTF-8  # 요청/응답 기본 인코딩
-
+    cors:
+      allowed-origins: https://safehouse-react-a5eyc2a9a0byd5hq.koreacentral-01.azurewebsites.net
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+      allowed-headers: "*"
+      allow-credentials: true
   # ================ 이메일 서버 설정 ================
   mail:
     host: smtp.gmail.com  # SMTP 서버 주소
